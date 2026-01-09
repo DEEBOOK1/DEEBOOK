@@ -3,86 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Profile</title>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500&display=swap" rel="stylesheet">
+    <title>My Streamer Profile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Kanit', sans-serif; }
 
         body {
-            /* ใส่รูปพื้นหลังเท่ๆ ตรงนี้ */
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
-                        url('https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&w=1350&q=80');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
+            /* พื้นหลังแบบมืดสนิทไล่สี */
+            background: radial-gradient(circle, #1a1a1a 0%, #000000 100%);
             height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
+            overflow: hidden;
         }
 
         .container {
-            background: rgba(255, 255, 255, 0.1); /* พื้นหลังกระจก */
-            backdrop-filter: blur(15px); /* เอฟเฟกต์เบลอ */
-            padding: 40px;
-            border-radius: 20px;
+            background: rgba(20, 20, 20, 0.6);
+            backdrop-filter: blur(20px);
+            padding: 50px 40px;
+            border-radius: 30px;
             text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             width: 90%;
-            max-width: 400px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            max-width: 420px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+        }
+
+        /* เอฟเฟกต์ไฟรอบรูปโปรไฟล์ (เหมือนกำลังสตรีม) */
+        .profile-container {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 20px;
         }
 
         .profile-img {
-            width: 100px;
-            height: 100px;
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
-            border: 3px solid #fff;
-            margin-bottom: 15px;
+            border: 2px solid #6441a5; /* สีม่วง Twitch */
+            position: relative;
+            z-index: 2;
         }
 
-        h1 { font-size: 24px; margin-bottom: 5px; }
-        p { font-weight: 300; opacity: 0.8; margin-bottom: 25px; }
+        .glow {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            border-radius: 50%;
+            background: #6441a5;
+            filter: blur(15px);
+            opacity: 0.6;
+            animation: pulse 2s infinite;
+        }
 
-        .links { display: flex; flex-direction: column; gap: 15px; }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.6; }
+            50% { transform: scale(1.2); opacity: 0.3; }
+            100% { transform: scale(1); opacity: 0.6; }
+        }
+
+        h1 { font-size: 28px; font-weight: 700; letter-spacing: 1px; }
+        .status { color: #00ff00; font-size: 14px; margin-bottom: 30px; display: block; }
+
+        .links { display: flex; flex-direction: column; gap: 12px; }
 
         .link-card {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 12px;
-            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 15px;
             text-decoration: none;
             color: white;
             font-weight: 500;
-            transition: 0.3s;
-            border: 1px solid transparent;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
-        /* เอฟเฟกต์ตอนเอาเมาส์ไปชี้ */
         .link-card:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.15);
+            transform: scale(1.05);
             border: 1px solid #fff;
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
         }
+
+        /* สีพิเศษสำหรับปุ่มสตรีม */
+        .twitch { border-left: 5px solid #6441a5; }
+        .steam { border-left: 5px solid #171a21; }
+        .discord { border-left: 5px solid #7289da; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <img src="https://via.placeholder.com/150" alt="Profile" class="profile-img">
+        <div class="profile-container">
+            <div class="glow"></div>
+            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="Profile" class="profile-img">
+        </div>
         
-        <h1>DEEBOOK</h1>
-        <p>I hope to get to know you ✨</p>
+        <h1>NAME_PLAYER</h1>
+        <span class="status">● ONLINE</span>
 
         <div class="links">
-            <a href="https://facebook.com/YOUR_ID" target="_blank" class="link-card">Facebook</a>
-            <a href="https://instagram.com/YOUR_ID" target="_blank" class="link-card">Instagram</a>
-            <a href="https://discord.gg/YOUR_LINK" target="_blank" class="link-card">Discord</a>
+            <a href="#" class="link-card twitch">🎮 Twitch Stream</a>
+            <a href="#" class="link-card steam">🕹️ Steam Profile</a>
+            <a href="#" class="link-card discord">💬 Discord Server</a>
+            <a href="#" class="link-card">📸 Instagram</a>
         </div>
     </div>
 
 </body>
-
 </html>
-
-
