@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
-        /* บังคับซ่อนเมาส์จริงในทุกจุด */
         * { 
             margin: 0; padding: 0; box-sizing: border-box; 
             font-family: 'Kanit', sans-serif; 
@@ -25,20 +24,35 @@
             overflow: hidden;
         }
 
-        /* --- Custom Sword Cursor (แบบเล่มเดียว) --- */
+        /* --- Scanlines Overlay (เพิ่มความเท่แบบจอเกม) --- */
+        body::before {
+            content: " ";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background-size: 100% 3px, 3px 100%;
+            z-index: 50;
+            pointer-events: none;
+        }
+
+        /* --- Sword Cursor --- */
         #sword-cursor {
             position: fixed;
             pointer-events: none;
             z-index: 10000;
             font-size: 32px;
-            /* ปรับตำแหน่งให้ปลายดาบตรงกับจุดคลิก */
             transform: translate(-10%, -90%) rotate(0deg); 
-            filter: drop-shadow(0 0 10px rgba(255,255,255,0.8));
-            transition: font-size 0.2s;
+            filter: drop-shadow(0 0 10px #fff);
+            transition: font-size 0.2s, transform 0.1s ease-out;
             user-select: none;
         }
 
-        /* เอฟเฟกต์หางเมาส์ละอองดาว */
+        /* เอฟเฟกต์ฟันดาบตอนคลิก */
+        .slash {
+            transform: translate(-10%, -90%) rotate(360deg) scale(1.5) !important;
+            transition: 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28) !important;
+        }
+
         .trail {
             position: fixed;
             width: 5px; height: 5px;
@@ -53,7 +67,7 @@
 
         @keyframes trailFade {
             0% { opacity: 0.8; transform: scale(1); }
-            100% { opacity: 0; transform: scale(0.1) translateY(10px); }
+            100% { opacity: 0; transform: scale(0.1) translateY(15px); }
         }
 
         #overlay {
@@ -67,7 +81,7 @@
             object-fit: cover; z-index: -1; opacity: 0.5;
         }
 
-        /* --- เนื้อหา --- */
+        /* --- Content Wrapper --- */
         .content-wrapper {
             display: none;
             flex-direction: column;
@@ -87,6 +101,13 @@
             margin-bottom: 25px;
             object-fit: cover;
             box-shadow: 0 0 35px rgba(255, 255, 255, 0.3);
+            /* ลูกเล่นขยับนิดๆ */
+            animation: profilePulse 4s infinite ease-in-out;
+        }
+
+        @keyframes profilePulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 35px rgba(255, 255, 255, 0.3); }
+            50% { transform: scale(1.05); box-shadow: 0 0 50px rgba(255, 255, 255, 0.5); }
         }
 
         .glint-text {
@@ -124,7 +145,7 @@
         .link-card:hover {
             background: rgba(255, 255, 255, 1);
             color: #000;
-            transform: scale(1.05);
+            transform: scale(1.05) translateX(10px); /* เลื่อนขวานิดๆ เวลา Hover */
             box-shadow: 0 0 25px rgba(255,255,255,0.5);
         }
 
@@ -191,7 +212,7 @@
         </div>
 
         <div class="view-section">
-            <i class="far fa-eye"></i> Views: <span id="view-count">Loading...</span>
+            <i class="far fa-eye"></i> Views: <span id="view-count">...</span>
         </div>
     </div>
 
@@ -216,30 +237,42 @@
             setTimeout(() => { trail.remove(); }, 700);
         });
 
+        // ลูกเล่นคลิกแล้วฟันดาบ
+        document.addEventListener('mousedown', () => {
+            sword.classList.add('slash');
+            // สร้างหางเมาส์เยอะๆ ตอนคลิก
+            for(let i=0; i<8; i++) {
+                const p = document.createElement('div');
+                p.className = 'trail';
+                p.style.left = sword.style.left;
+                p.style.top = sword.style.top;
+                p.style.transform = `rotate(${i*45}deg) translateY(-20px)`;
+                document.body.appendChild(p);
+            }
+        });
+        document.addEventListener('mouseup', () => {
+            setTimeout(() => { sword.classList.remove('slash'); }, 150);
+        });
+
         function growSword() { sword.style.fontSize = '45px'; }
         function shrinkSword() { sword.style.fontSize = '32px'; }
 
         // --- ระบบ Unique View Counter (ของจริง) ---
         async function updateViews() {
-            const namespace = "deebook_unique_v1"; // เปลี่ยนชื่อตรงนี้ถ้าอยากเริ่มนับใหม่
+            const namespace = "deebook_final_v1"; 
             const key = "visits";
-            
             try {
-                const hasVisited = localStorage.getItem('v_deebook');
+                const hasVisited = localStorage.getItem('v_deebook_unique');
                 let url = `https://api.countapi.xyz/get/${namespace}/${key}`;
-                
                 if (!hasVisited) {
-                    // ถ้ายังไม่เคยมา ให้เพิ่มแต้ม
                     url = `https://api.countapi.xyz/hit/${namespace}/${key}`;
-                    localStorage.setItem('v_visited_deebook', 'true');
+                    localStorage.setItem('v_deebook_unique', 'true');
                 }
-
                 const res = await fetch(url);
                 const data = await res.json();
-                // แสดงเลข (บวกเพิ่ม 1250 เพื่อความเท่)
                 viewDisplay.innerText = ((data.value || 0) + 1250).toLocaleString();
             } catch (e) {
-                viewDisplay.innerText = "1,251"; // ถ้า API ล่มให้โชว์เลขสำรอง
+                viewDisplay.innerText = "1,252";
             }
         }
 
@@ -249,7 +282,7 @@
                 overlay.style.display = "none"; 
                 content.style.display = "flex"; 
                 document.getElementById("player-ui").style.display = "flex";
-                updateViews(); // เรียกนับวิวจริงตอนเข้าหน้าหลัก
+                updateViews();
             }, 1000);
             video.muted = false; video.play(); audio.play();
         }
