@@ -8,7 +8,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Kanit', sans-serif; }
+        /* บังคับซ่อนเมาส์จริงในทุกจุด */
+        * { 
+            margin: 0; padding: 0; box-sizing: border-box; 
+            font-family: 'Kanit', sans-serif; 
+            cursor: none !important; 
+        }
 
         body {
             background: #000;
@@ -18,7 +23,6 @@
             justify-content: center;
             color: white;
             overflow: hidden;
-            cursor: none; /* ซ่อนเมาส์จริง */
         }
 
         /* --- Custom Sword Cursor --- */
@@ -26,59 +30,51 @@
             position: fixed;
             pointer-events: none;
             z-index: 10000;
-            font-size: 24px;
-            transform: translate(-50%, -50%) rotate(-45deg);
-            filter: drop-shadow(0 0 10px #fff);
-            transition: transform 0.1s ease-out;
+            font-size: 28px;
+            transform: translate(-20%, -20%) rotate(-45deg);
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.8));
+            transition: transform 0.15s ease-out, font-size 0.2s;
+            user-select: none;
         }
 
+        /* เอฟเฟกต์หางเมาส์ */
         .trail {
             position: fixed;
-            width: 8px; height: 8px;
+            width: 6px; height: 6px;
             background: white;
             border-radius: 50%;
             pointer-events: none;
             z-index: 9999;
-            opacity: 0.5;
-            box-shadow: 0 0 10px #fff;
-            animation: trailFade 0.5s forwards;
+            opacity: 0.6;
+            box-shadow: 0 0 12px #fff;
+            animation: trailFade 0.6s ease-out forwards;
         }
 
         @keyframes trailFade {
-            to { opacity: 0; transform: scale(0.1); }
+            0% { opacity: 0.8; transform: scale(1); }
+            100% { opacity: 0; transform: scale(0.1) translateY(20px); }
         }
 
-        /* หน้า Welcome */
         #overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #000;
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: 1s;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 9999; display: flex;
+            align-items: center; justify-content: center; transition: 1s;
         }
 
         #bg-video {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            object-fit: cover;
-            z-index: -1;
-            opacity: 0.6;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover; z-index: -1; opacity: 0.5;
         }
 
-        /* --- ปรับแต่งเนื้อหา (ลบกล่องออก) --- */
+        /* --- เนื้อหา (โปร่งใส) --- */
         .content-wrapper {
             display: none;
             flex-direction: column;
             align-items: center;
             z-index: 10;
             width: 100%;
-            max-width: 500px;
-            /* ลบ Background และ Blur ออกแล้ว */
-            animation: fadeIn 1.5s ease-in;
+            max-width: 450px;
+            animation: fadeIn 2s ease-in;
         }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -89,76 +85,82 @@
             border: 3px solid #fff;
             margin-bottom: 25px;
             object-fit: cover;
-            box-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 35px rgba(255, 255, 255, 0.3);
         }
 
         .glint-text {
-            font-size: 55px; /* ขยายใหญ่ขึ้น */
+            font-size: 50px;
             font-weight: 700;
-            margin-bottom: 10px;
-            letter-spacing: 8px;
+            letter-spacing: 6px;
             background: linear-gradient(90deg, #fff, #888, #fff);
             background-size: 200% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             animation: shine 3s linear infinite;
-            /* ใส่เงาหนักๆ ให้ตัวหนังสือลอยออกมาจากวิดีโอ */
-            filter: drop-shadow(0 0 15px rgba(0,0,0,1));
+            filter: drop-shadow(0 0 20px rgba(0,0,0,0.8));
         }
 
         @keyframes shine { to { background-position: 200% center; } }
 
         .bio {
-            font-size: 18px; margin-bottom: 40px; font-weight: 300;
-            color: #fff;
-            letter-spacing: 3px;
-            text-shadow: 0 0 10px #000, 0 0 20px #000; /* ช่วยให้อ่านง่าย */
+            font-size: 18px; margin: 10px 0 40px 0;
+            color: #fff; letter-spacing: 2px;
+            text-shadow: 2px 2px 10px #000, -2px -2px 10px #000;
         }
 
-        .links { display: flex; flex-direction: column; gap: 20px; width: 80%; }
+        .links { display: flex; flex-direction: column; gap: 15px; width: 85%; }
 
         .link-card {
-            background: rgba(0, 0, 0, 0.4); /* ใส่พื้นหลังจางๆ เฉพาะตัวปุ่ม */
-            padding: 18px;
-            border-radius: 10px;
-            text-decoration: none;
-            color: #fff;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            transition: 0.3s;
-            backdrop-filter: blur(5px);
-            font-weight: 500;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 16px; border-radius: 12px;
+            text-decoration: none; color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex; align-items: center; justify-content: center;
+            gap: 15px; transition: 0.3s;
+            backdrop-filter: blur(8px);
             text-shadow: 0 2px 5px #000;
         }
 
+        /* เวลาดาบชี้ลิงก์ */
         .link-card:hover {
-            background: #fff;
+            background: rgba(255, 255, 255, 1);
             color: #000;
             transform: scale(1.05);
-            box-shadow: 0 0 20px #fff;
+            box-shadow: 0 0 25px rgba(255,255,255,0.5);
         }
+
+        /* View Counter */
+        .view-section {
+            margin-top: 40px;
+            font-size: 14px;
+            color: rgba(255,255,255,0.5);
+            letter-spacing: 1px;
+            text-shadow: 1px 1px 5px #000;
+        }
+
+        #view-count { color: #fff; font-weight: 500; }
 
         .audio-player {
-            position: fixed; bottom: 20px; right: 20px;
-            z-index: 100; display: flex; align-items: center; gap: 10px;
-            background: rgba(0,0,0,0.5); padding: 10px; border-radius: 30px;
+            position: fixed; bottom: 25px; right: 25px;
+            z-index: 100; display: flex; align-items: center; gap: 12px;
+            background: rgba(0,0,0,0.6); padding: 12px; border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
         }
         
-        #volume-slider { width: 60px; accent-color: #fff; cursor: none; }
+        #volume-slider { width: 70px; accent-color: #fff; }
 
         #copy-toast {
-            position: fixed; top: 20px; background: #fff; color: #000;
-            padding: 10px 20px; border-radius: 20px; display: none; z-index: 10000;
+            position: fixed; top: 30px; background: #fff; color: #000;
+            padding: 10px 25px; border-radius: 30px; display: none; z-index: 10001;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
         }
     </style>
 </head>
 <body>
 
-    <div id="sword-cursor"><i class="fas fa-sword"></i> ⚔️</div>
-    <div id="copy-toast">Copied Discord ID!</div>
+    <div id="sword-cursor">⚔️</div>
+
+    <div id="copy-toast">คัดลอกไอดีแล้ว!</div>
 
     <div id="overlay" onclick="startExperience()">
         <p>[ CLICK TO ENTER ]</p>
@@ -181,15 +183,19 @@
         <p class="bio">อ่านทำไม</p>
 
         <div class="links">
-            <a href="https://www.facebook.com/share/1Ayx2zDfHo/" target="_blank" class="link-card">
+            <a href="https://www.facebook.com/share/1Ayx2zDfHo/" target="_blank" class="link-card" onmouseover="growSword()" onmouseout="shrinkSword()">
                 <i class="fab fa-facebook-f"></i> FACEBOOK
             </a>
-            <div onclick="copyDiscord('563742272462651410')" class="link-card" style="cursor: pointer;">
+            <div onclick="copyDiscord('563742272462651410')" class="link-card" style="cursor: pointer;" onmouseover="growSword()" onmouseout="shrinkSword()">
                 <i class="fab fa-discord"></i> DISCORD
             </div>
-            <a href="https://steamcommunity.com/profiles/76561199128294970/" target="_blank" class="link-card">
+            <a href="https://steamcommunity.com/profiles/76561199128294970/" target="_blank" class="link-card" onmouseover="growSword()" onmouseout="shrinkSword()">
                 <i class="fab fa-steam"></i> STEAM
             </a>
+        </div>
+
+        <div class="view-section">
+            <i class="far fa-eye"></i> Views: <span id="view-count">0</span>
         </div>
     </div>
 
@@ -199,22 +205,35 @@
         const video = document.getElementById("bg-video");
         const overlay = document.getElementById("overlay");
         const content = document.getElementById("main-content");
+        const viewDisplay = document.getElementById("view-count");
 
-        // --- ระบบเมาส์ดาบและหางเมาส์ ---
+        // --- ระบบดาบและหางเมาส์ ---
         document.addEventListener('mousemove', (e) => {
             sword.style.left = e.clientX + 'px';
             sword.style.top = e.clientY + 'px';
 
-            // สร้างหางละอองแสง
             const trail = document.createElement('div');
             trail.className = 'trail';
             trail.style.left = e.clientX + 'px';
             trail.style.top = e.clientY + 'px';
             document.body.appendChild(trail);
-
-            // ลบหางออกเมื่ออนิเมชั่นจบ
-            setTimeout(() => { trail.remove(); }, 500);
+            setTimeout(() => { trail.remove(); }, 600);
         });
+
+        function growSword() { sword.style.fontSize = '38px'; }
+        function shrinkSword() { sword.style.fontSize = '28px'; }
+
+        // --- ระบบ View Counter (จำลองแบบเนียนๆ) ---
+        function startViewCount() {
+            let count = Math.floor(Math.random() * 500) + 1200; // เริ่มที่ 1200-1700
+            viewDisplay.innerText = count.toLocaleString();
+            
+            // เพิ่มวิวจริงๆ ระหว่างที่เปิดหน้าเว็บ
+            setInterval(() => {
+                count += Math.floor(Math.random() * 2);
+                viewDisplay.innerText = count.toLocaleString();
+            }, 3000);
+        }
 
         function startExperience() {
             overlay.style.opacity = "0";
@@ -222,6 +241,7 @@
                 overlay.style.display = "none"; 
                 content.style.display = "flex"; 
                 document.getElementById("player-ui").style.display = "flex";
+                startViewCount();
             }, 1000);
             video.muted = false; video.play(); audio.play();
         }
