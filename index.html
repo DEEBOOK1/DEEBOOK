@@ -67,11 +67,16 @@
         }
 
         .link-card:hover {
-    background: rgba(255, 255, 255, 0.2); /* สีขาวใสสว่างขึ้น */
-    transform: translateY(-3px) scale(1.02); /* เด้งขึ้นและขยายจิดนึง */
-    border: 1px solid rgba(255, 255, 255, 0.5); /* ขอบสว่างขึ้น */
-    box-shadow: 0 10px 20px rgba(0,0,0,0.4); /* เงาเข้มขึ้นให้ดูนูน */
-    color: #fff; /* ตัวหนังสือสีขาวตลอด */
+    background: rgba(255, 255, 255, 0.25); /* สว่างขึ้นอีกนิด */
+    transform: translateY(-5px) scale(1.03); /* เด้งสูงขึ้นและขยายตัวนิดหน่อย */
+    border: 1px solid rgba(255, 255, 255, 0.8); /* ขอบชัดขึ้น */
+    color: #fff;
+    
+    /* เอฟเฟกต์เรืองแสง (Glow) */
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.4), 
+                0 0 40px rgba(255, 255, 255, 0.2);
+    
+    transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1); /* ทำให้การเคลื่อนไหวนุ่มนวลขึ้น */
 }
 
     </style>
@@ -93,6 +98,7 @@
 
 </body>
 </html>
+
 
 
 
