@@ -18,10 +18,9 @@
             justify-content: center;
             color: white;
             overflow: hidden;
-            /* เพิ่ม Custom Cursor */
-            cursor: crosshair; 
         }
 
+        /* หน้า Welcome */
         #overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -39,13 +38,13 @@
             text-transform: uppercase;
             animation: pulse 2s infinite;
         }
-
         @keyframes pulse {
             0% { opacity: 0.3; }
             50% { opacity: 1; }
             100% { opacity: 0.3; }
         }
 
+        /* วิดีโอพื้นหลัง */
         #bg-video {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -54,25 +53,7 @@
             opacity: 0.6;
         }
 
-        /* --- เพิ่มลูกเล่นแสงวิ่งผ่านชื่อ (Glint) --- */
-        .glint-text {
-            display: inline-block;
-            position: relative;
-            background: linear-gradient(to right, #fff 20%, #888 40%, #888 60%, #fff 80%);
-            background-size: 200% auto;
-            color: #fff;
-            background-clip: text;
-            text-fill-color: transparent;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: shine 4s linear infinite;
-        }
-
-        @keyframes shine {
-            to { background-position: 200% center; }
-        }
-        /* --------------------------------- */
-
+        /* คอนโทรลเสียง */
         .audio-player {
             position: fixed;
             bottom: 20px;
@@ -94,51 +75,107 @@
             accent-color: #fff;
         }
 
+        /* จัดกึ่งกลางแนวตั้งให้ตรงเป๊ะ */
         .content-wrapper {
+            display: none; /* ซ่อนไว้ก่อน */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             text-align: center;
             z-index: 10;
-            width: 90%;
+            width: 100%;
             max-width: 380px;
-            display: none;
+            animation: fadeInBlur 1.5s ease-out;
         }
 
+        @keyframes fadeInBlur {
+            from { opacity: 0; transform: translateY(20px); filter: blur(10px); }
+            to { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+
+        /* รูปโปรไฟล์มีลูกเล่น Pulse */
         .profile-img {
-            width: 120px; height: 120px;
+            width: 130px;
+            height: 130px;
             border-radius: 50%;
-            border: 2px solid rgba(255, 255, 255, 0.8);
-            margin-bottom: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.6);
+            margin-bottom: 25px;
             object-fit: cover;
-            transition: 0.4s ease;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+            animation: profilePulse 3s infinite ease-in-out;
+            transition: 0.5s ease;
+        }
+        
+        .profile-img:hover {
+            transform: scale(1.1);
+            border-color: #fff;
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.5);
         }
 
-        h1 { 
-            font-size: 42px; /* ใหญ่ขึ้นนิดนึง */
-            font-weight: 700; 
-            margin-bottom: 5px; 
+        @keyframes profilePulse {
+            0% { box-shadow: 0 0 15px rgba(255, 255, 255, 0.2); }
+            50% { box-shadow: 0 0 35px rgba(255, 255, 255, 0.4); }
+            100% { box-shadow: 0 0 15px rgba(255, 255, 255, 0.2); }
+        }
+
+        /* ชื่อมีแสงวิ่ง Glint */
+        .glint-text {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 5px;
             letter-spacing: 4px;
-            text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
+            display: inline-block;
+            background: linear-gradient(to right, #fff 20%, #888 40%, #888 60%, #fff 80%);
+            background-size: 200% auto;
+            color: #fff;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 4s linear infinite;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+        }
+
+        @keyframes shine {
+            to { background-position: 200% center; }
         }
 
         .bio {
-            font-size: 15px; font-weight: 300; margin-bottom: 35px;
-            font-style: italic; color: rgba(255,255,255,0.9);
+            font-size: 15px;
+            font-weight: 300;
+            margin-bottom: 35px;
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.9);
+            text-shadow: 1px 1px 5px rgba(0,0,0,0.5);
         }
 
-        .links { display: flex; flex-direction: column; gap: 15px; }
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+        }
 
         .link-card {
             background: rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(5px);
-            padding: 16px; border-radius: 50px;
-            text-decoration: none; color: #fff;
+            padding: 16px;
+            border-radius: 50px;
+            text-decoration: none;
+            color: #fff;
+            font-weight: 500;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            display: flex; align-items: center; justify-content: center; gap: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
             transition: 0.3s all;
         }
 
         .link-card:hover {
-            background: #fff; color: #000; transform: translateY(-3px);
-            box-shadow: 0 0 20px rgba(255,255,255,0.3);
+            background: #fff;
+            color: #000;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 255, 255, 0.2);
         }
     </style>
 </head>
@@ -165,6 +202,7 @@
         <img src="FB_IMG_1699721840964.jpg" alt="Profile" class="profile-img">
         
         <h1 class="glint-text">DEEBOOK</h1>
+        
         <p class="bio">อ่าน ทำ ไม</p>
 
         <div class="links">
@@ -191,10 +229,11 @@
 
         function startExperience() {
             overlay.style.opacity = "0";
-            setTimeout(() => { overlay.style.display = "none"; }, 1000);
-
-            content.style.display = "block";
-            playerUI.style.display = "flex";
+            setTimeout(() => { 
+                overlay.style.display = "none"; 
+                content.style.display = "flex"; // เปลี่ยนเป็น flex เพื่อให้จัดกลางเป๊ะ
+                playerUI.style.display = "flex";
+            }, 1000);
 
             video.muted = false;
             video.play();
