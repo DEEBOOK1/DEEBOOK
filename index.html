@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DEEBOOK Profile</title>
+    <title>DEEBOOK Profile | Official</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
@@ -18,6 +18,7 @@
             justify-content: center;
             color: white;
             overflow: hidden;
+            cursor: default;
         }
 
         /* หน้า Welcome */
@@ -30,18 +31,17 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: 1s ease-in-out;
+            transition: 1.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
         #overlay p {
-            font-size: 18px;
-            letter-spacing: 5px;
+            font-size: clamp(14px, 4vw, 18px);
+            letter-spacing: 8px;
             text-transform: uppercase;
-            animation: pulse 2s infinite;
+            animation: pulseText 2s infinite;
         }
-        @keyframes pulse {
-            0% { opacity: 0.3; }
-            50% { opacity: 1; }
-            100% { opacity: 0.3; }
+        @keyframes pulseText {
+            0%, 100% { opacity: 0.2; transform: scale(0.95); }
+            50% { opacity: 1; transform: scale(1); }
         }
 
         /* วิดีโอพื้นหลัง */
@@ -51,144 +51,134 @@
             object-fit: cover;
             z-index: -1;
             opacity: 0.5;
-        }
-
-        /* Canvas สำหรับหิมะ/อนุภาค */
-        #particles-canvas {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 0;
-            pointer-events: none;
+            transition: 1s;
         }
 
         /* คอนโทรลเสียง */
         .audio-player {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
+            bottom: 30px;
+            right: 30px;
             z-index: 100;
             display: flex;
             align-items: center;
             gap: 15px;
-            background: rgba(0,0,0,0.5);
-            padding: 10px 15px;
-            border-radius: 30px;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px 20px;
+            border-radius: 40px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
         #volume-slider { width: 80px; cursor: pointer; accent-color: #fff; }
 
+        /* ตัวครอบเนื้อหาหลัก */
         .content-wrapper {
             display: none;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            text-align: center;
             z-index: 10;
-            width: 100%;
-            max-width: 380px;
-            animation: fadeInBlur 1.5s ease-out;
+            width: 90%;
+            max-width: 400px;
+            padding: 40px 20px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            animation: containerEntry 2s ease-out;
         }
 
-        @keyframes fadeInBlur {
-            from { opacity: 0; transform: translateY(20px); filter: blur(10px); }
-            to { opacity: 1; transform: translateY(0); filter: blur(0); }
+        @keyframes containerEntry {
+            from { opacity: 0; transform: scale(0.9); filter: blur(20px); }
+            to { opacity: 1; transform: scale(1); filter: blur(0); }
         }
 
+        /* รูปโปรไฟล์ */
         .profile-img {
-            width: 130px; height: 130px;
+            width: 140px; height: 140px;
             border-radius: 50%;
-            border: 3px solid rgba(255, 255, 255, 0.6);
+            border: 3px solid rgba(255, 255, 255, 0.8);
             margin-bottom: 25px;
             object-fit: cover;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
-            animation: profilePulse 3s infinite ease-in-out;
-            transition: 0.5s ease;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.15);
+            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         
-        @keyframes profilePulse {
-            0%, 100% { box-shadow: 0 0 15px rgba(255, 255, 255, 0.2); }
-            50% { box-shadow: 0 0 35px rgba(255, 255, 255, 0.4); }
+        .profile-img:hover {
+            transform: rotate(5deg) scale(1.1);
+            border-color: #fff;
+            box-shadow: 0 0 50px rgba(255, 255, 255, 0.3);
         }
 
+        /* ชื่อ */
         .glint-text {
-            font-size: 42px;
+            font-size: 45px;
             font-weight: 700;
-            margin-bottom: 5px;
-            letter-spacing: 4px;
-            background: linear-gradient(to right, #fff 20%, #888 40%, #888 60%, #fff 80%);
+            margin-bottom: 10px;
+            letter-spacing: 5px;
+            background: linear-gradient(90deg, #fff, #555, #fff);
             background-size: 200% auto;
-            color: #fff;
-            background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: shine 4s linear infinite;
+            animation: shine 3s linear infinite;
         }
 
         @keyframes shine { to { background-position: 200% center; } }
 
         .bio {
-            font-size: 15px; margin-bottom: 35px; font-style: italic;
-            color: rgba(255, 255, 255, 0.9);
+            font-size: 16px; margin-bottom: 40px; font-weight: 300;
+            color: rgba(255, 255, 255, 0.7);
+            letter-spacing: 2px;
         }
 
-        .links { display: flex; flex-direction: column; gap: 15px; width: 100%; }
+        .links { display: flex; flex-direction: column; gap: 18px; width: 100%; }
 
         .link-card {
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(5px);
-            padding: 16px;
-            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 18px;
+            border-radius: 15px;
             text-decoration: none;
             color: #fff;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
-            transition: 0.3s all;
+            gap: 15px;
+            transition: 0.4s;
             position: relative;
             overflow: hidden;
+        }
+
+        .link-card::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: 0.5s;
         }
 
         .link-card:hover {
             background: rgba(255, 255, 255, 1);
             color: #000;
-            transform: translateY(-3px);
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+            transform: scale(1.03);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
         }
 
-        /* แจ้งเตือนเวลา Copy Discord */
+        .link-card:hover::before { left: 100%; }
+
         #copy-toast {
-            position: fixed;
-            top: 20px;
-            background: rgba(255,255,255,0.9);
-            color: #000;
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 500;
-            display: none;
-            z-index: 10000;
-            animation: fadeInDown 0.5s;
-        }
-
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
+            position: fixed; bottom: 100px; background: #fff; color: #000;
+            padding: 12px 25px; border-radius: 30px; display: none;
+            z-index: 1000; font-weight: 500; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
     </style>
 </head>
 <body>
 
-    <div id="copy-toast">คัดลอก Discord ID แล้ว!</div>
+    <div id="copy-toast">Copied Discord ID!</div>
 
     <div id="overlay" onclick="startExperience()">
         <p>[ CLICK TO ENTER ]</p>
     </div>
-
-    <canvas id="particles-canvas"></canvas>
 
     <video id="bg-video" loop playsinline muted>
         <source src="0110.mp4" type="video/mp4">
@@ -212,8 +202,8 @@
             <a href="https://www.facebook.com/share/1Ayx2zDfHo/" target="_blank" class="link-card">
                 <i class="fab fa-facebook-f"></i> FACEBOOK
             </a>
-            <div onclick="copyDiscord('563742272462651410')" class="link-card" style="cursor: pointer;">
-                <i class="fab fa-discord"></i> DISCORD (CLICK TO COPY)
+            <div onclick="copyDiscord('DEEBOOK_ID_HERE')" class="link-card" style="cursor: pointer;">
+                <i class="fab fa-discord"></i> DISCORD
             </div>
             <a href="https://steamcommunity.com/profiles/76561199128294970/" target="_blank" class="link-card">
                 <i class="fab fa-steam"></i> STEAM
@@ -232,6 +222,8 @@
 
         function startExperience() {
             overlay.style.opacity = "0";
+            video.style.opacity = "0.5";
+            
             setTimeout(() => { 
                 overlay.style.display = "none"; 
                 content.style.display = "flex"; 
@@ -241,11 +233,9 @@
             video.muted = false;
             video.play();
             audio.volume = 0.5;
-            audio.play();
-            initParticles(); // เริ่มระบบหิมะ
+            audio.play().catch(e => console.log("Audio play blocked"));
         }
 
-        // ระบบก๊อปปี้ Discord
         function copyDiscord(id) {
             navigator.clipboard.writeText(id);
             const toast = document.getElementById('copy-toast');
@@ -253,7 +243,6 @@
             setTimeout(() => { toast.style.display = 'none'; }, 2000);
         }
 
-        // ระบบปรับเสียง
         volumeSlider.addEventListener("input", (e) => {
             audio.volume = e.target.value;
             muteBtn.className = audio.volume == 0 ? "fas fa-volume-mute" : "fas fa-volume-up";
@@ -262,40 +251,6 @@
         function toggleMute() {
             audio.muted = !audio.muted;
             muteBtn.className = audio.muted ? "fas fa-volume-mute" : "fas fa-volume-up";
-        }
-
-        // --- ระบบหิมะ (Particles) ---
-        const canvas = document.getElementById('particles-canvas');
-        const ctx = canvas.getContext('2d');
-        let particles = [];
-
-        function initParticles() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            for(let i=0; i<50; i++) {
-                particles.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    r: Math.random() * 2 + 1,
-                    d: Math.random() * 50,
-                    v: Math.random() * 0.5 + 0.2
-                });
-            }
-            animate();
-        }
-
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
-            ctx.beginPath();
-            for(let p of particles) {
-                ctx.moveTo(p.x, p.y);
-                ctx.arc(p.x, p.y, p.r, 0, Math.PI*2, true);
-                p.y += p.v;
-                if(p.y > canvas.height) p.y = -10;
-            }
-            ctx.fill();
-            requestAnimationFrame(animate);
         }
     </script>
 </body>
