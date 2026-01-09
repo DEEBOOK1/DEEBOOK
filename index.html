@@ -24,7 +24,7 @@
             overflow: hidden;
         }
 
-        /* --- Scanlines Overlay (เพิ่มความเท่แบบจอเกม) --- */
+        /* --- Scanlines Overlay --- */
         body::before {
             content: " ";
             position: fixed;
@@ -47,27 +47,26 @@
             user-select: none;
         }
 
-        /* เอฟเฟกต์ฟันดาบตอนคลิก */
         .slash {
             transform: translate(-10%, -90%) rotate(360deg) scale(1.5) !important;
             transition: 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28) !important;
         }
 
+        /* --- หางเมาส์แบบรอยฟัน (Sword Trail) --- */
         .trail {
             position: fixed;
-            width: 5px; height: 5px;
-            background: white;
-            border-radius: 50%;
+            width: 30px; 
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #fff, transparent);
             pointer-events: none;
             z-index: 9999;
-            opacity: 0.6;
-            box-shadow: 0 0 10px #fff;
-            animation: trailFade 0.7s ease-out forwards;
+            opacity: 0.8;
+            animation: trailAnim 0.5s ease-out forwards;
         }
 
-        @keyframes trailFade {
-            0% { opacity: 0.8; transform: scale(1); }
-            100% { opacity: 0; transform: scale(0.1) translateY(15px); }
+        @keyframes trailAnim {
+            0% { transform: scaleX(0) rotate(var(--r)); opacity: 1; }
+            100% { transform: scaleX(1.5) rotate(var(--r)) translateY(10px); opacity: 0; }
         }
 
         #overlay {
@@ -81,35 +80,56 @@
             object-fit: cover; z-index: -1; opacity: 0.5;
         }
 
-        /* --- Content Wrapper --- */
-        .content-wrapper {
-            display: none;
-            flex-direction: column;
+        /* --- กรอบโปรไฟล์ RGB หมุน --- */
+        .profile-container {
+            position: relative;
+            width: 155px;
+            height: 155px;
+            display: flex;
             align-items: center;
-            z-index: 10;
-            width: 100%;
-            max-width: 450px;
-            animation: fadeIn 2s ease-in;
-        }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        .profile-img {
-            width: 140px; height: 140px;
-            border-radius: 50%;
-            border: 3px solid #fff;
+            justify-content: center;
             margin-bottom: 25px;
-            object-fit: cover;
-            box-shadow: 0 0 35px rgba(255, 255, 255, 0.3);
-            /* ลูกเล่นขยับนิดๆ */
             animation: profilePulse 4s infinite ease-in-out;
         }
 
-        @keyframes profilePulse {
-            0%, 100% { transform: scale(1); box-shadow: 0 0 35px rgba(255, 255, 255, 0.3); }
-            50% { transform: scale(1.05); box-shadow: 0 0 50px rgba(255, 255, 255, 0.5); }
+        .profile-border {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(0deg, transparent, transparent, #fff, #00d2ff, #3a7bd5);
+            animation: rotateBorder 2s linear infinite;
         }
 
+        .profile-border::before {
+            content: "";
+            position: absolute;
+            inset: 5px;
+            background: #000;
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        @keyframes rotateBorder {
+            0% { transform: rotate(0deg); filter: hue-rotate(0deg); }
+            100% { transform: rotate(360deg); filter: hue-rotate(360deg); }
+        }
+
+        .profile-img {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            z-index: 2;
+            object-fit: cover;
+            position: relative;
+        }
+
+        @keyframes profilePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* --- Text Styling --- */
         .glint-text {
             font-size: 50px;
             font-weight: 700;
@@ -130,6 +150,7 @@
             text-shadow: 2px 2px 10px #000;
         }
 
+        /* --- Links --- */
         .links { display: flex; flex-direction: column; gap: 15px; width: 85%; }
 
         .link-card {
@@ -145,7 +166,7 @@
         .link-card:hover {
             background: rgba(255, 255, 255, 1);
             color: #000;
-            transform: scale(1.05) translateX(10px); /* เลื่อนขวานิดๆ เวลา Hover */
+            transform: scale(1.05) translateX(10px);
             box-shadow: 0 0 25px rgba(255,255,255,0.5);
         }
 
@@ -153,10 +174,7 @@
             margin-top: 40px;
             font-size: 14px;
             color: rgba(255,255,255,0.5);
-            letter-spacing: 1px;
         }
-
-        #view-count { color: #fff; font-weight: 500; }
 
         .audio-player {
             position: fixed; bottom: 25px; right: 25px;
@@ -176,7 +194,6 @@
 <body>
 
     <div id="sword-cursor">🗡️</div>
-
     <div id="copy-toast">คัดลอกไอดีแล้ว!</div>
 
     <div id="overlay" onclick="startExperience()">
@@ -194,8 +211,12 @@
 
     <audio id="myAudio" loop><source src="11er.mp3" type="audio/mpeg"></audio>
 
-    <div class="content-wrapper" id="main-content">
-        <img src="FB_IMG_1699721840964.jpg" alt="Profile" class="profile-img">
+    <div class="content-wrapper" id="main-content" style="display: none;">
+        <div class="profile-container">
+            <div class="profile-border"></div>
+            <img src="FB_IMG_1699721840964.jpg" alt="Profile" class="profile-img">
+        </div>
+
         <h1 class="glint-text">DEEBOOK</h1>
         <p class="bio">อ่านทำไม</p>
 
@@ -224,31 +245,27 @@
         const content = document.getElementById("main-content");
         const viewDisplay = document.getElementById("view-count");
 
-        // --- ระบบดาบและหางเมาส์ ---
+        // --- ระบบหางเมาส์แบบรอยฟันดาบ ---
+        let lastX = 0;
         document.addEventListener('mousemove', (e) => {
             sword.style.left = e.clientX + 'px';
             sword.style.top = e.clientY + 'px';
+
+            // คำนวณทิศทางเพื่อเอียงรอยฟันดาบ
+            let angle = Math.atan2(e.clientY - lastX, e.clientX - lastX) * (180 / Math.PI);
+            lastX = e.clientX;
 
             const trail = document.createElement('div');
             trail.className = 'trail';
             trail.style.left = e.clientX + 'px';
             trail.style.top = e.clientY + 'px';
+            trail.style.setProperty('--r', angle + 'deg');
             document.body.appendChild(trail);
-            setTimeout(() => { trail.remove(); }, 700);
+            setTimeout(() => { trail.remove(); }, 500);
         });
 
-        // ลูกเล่นคลิกแล้วฟันดาบ
         document.addEventListener('mousedown', () => {
             sword.classList.add('slash');
-            // สร้างหางเมาส์เยอะๆ ตอนคลิก
-            for(let i=0; i<8; i++) {
-                const p = document.createElement('div');
-                p.className = 'trail';
-                p.style.left = sword.style.left;
-                p.style.top = sword.style.top;
-                p.style.transform = `rotate(${i*45}deg) translateY(-20px)`;
-                document.body.appendChild(p);
-            }
         });
         document.addEventListener('mouseup', () => {
             setTimeout(() => { sword.classList.remove('slash'); }, 150);
@@ -257,22 +274,21 @@
         function growSword() { sword.style.fontSize = '45px'; }
         function shrinkSword() { sword.style.fontSize = '32px'; }
 
-        // --- ระบบ Unique View Counter (ของจริง) ---
         async function updateViews() {
-            const namespace = "deebook_final_v1"; 
+            const namespace = "deebook_unique_vfinal"; 
             const key = "visits";
             try {
-                const hasVisited = localStorage.getItem('v_deebook_unique');
+                const hasVisited = localStorage.getItem('v_db_final');
                 let url = `https://api.countapi.xyz/get/${namespace}/${key}`;
                 if (!hasVisited) {
                     url = `https://api.countapi.xyz/hit/${namespace}/${key}`;
-                    localStorage.setItem('v_deebook_unique', 'true');
+                    localStorage.setItem('v_db_final', 'true');
                 }
                 const res = await fetch(url);
                 const data = await res.json();
                 viewDisplay.innerText = ((data.value || 0) + 1250).toLocaleString();
             } catch (e) {
-                viewDisplay.innerText = "1,252";
+                viewDisplay.innerText = "1,254";
             }
         }
 
