@@ -3,104 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DEEBOOK Profile</title>
+    <title>DEEBOOK Profile Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <style>
-        /* ตั้งค่าพื้นฐาน */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Kanit', sans-serif; }
 
         body {
-            background: radial-gradient(circle, #1a1a1a 0%, #0a0a0a 100%);
+            background: #000;
             height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             overflow: hidden;
+            position: relative;
         }
 
-        /* กล่องข้อความหลัก */
+        /* --- เอฟเฟกต์หิมะ/ละอองลอย --- */
+        .particles {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            background: radial-gradient(circle, #1a1a1a 0%, #000 100%);
+        }
+
+        /* --- กล่องหลัก --- */
         .container {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(10, 10, 10, 0.8);
             backdrop-filter: blur(20px);
             padding: 40px;
             border-radius: 25px;
             text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 10;
             width: 90%;
             max-width: 380px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 30px rgba(0,0,0,1);
         }
 
-        /* รูปโปรไฟล์ */
+        /* --- รูปโปรไฟล์เรืองแสง --- */
         .profile-img {
-            width: 110px;
-            height: 110px;
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
-            border: 2px solid rgba(255, 255, 255, 0.5);
+            border: 2px solid #fff;
             margin-bottom: 20px;
             object-fit: cover;
-            box-shadow: 0 0 15px rgba(255,255,255,0.1);
-        }
-
-        /* ชื่อเรืองแสงและแอนิเมชัน */
-        h1 { 
-            font-size: 28px; 
-            font-weight: 700; 
-            margin-bottom: 10px; 
-            letter-spacing: 2px;
-            color: #fff;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.4);
-            animation: glow-pulse 2s ease-in-out infinite alternate;
-        }
-
-        @keyframes glow-pulse {
-            from { text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.3); }
-            to { text-shadow: 0 0 20px rgba(255, 255, 255, 0.9), 0 0 40px rgba(255, 255, 255, 0.6); }
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+            transition: 0.5s;
         }
         
-        p { font-weight: 300; opacity: 0.7; margin-bottom: 30px; font-size: 14px; }
+        .profile-img:hover {
+            transform: rotate(360deg); /* หมุนตอนชี้ */
+        }
 
-        /* การจัดวางปุ่ม */
+        /* --- ชื่อเรืองแสง --- */
+        h1 { 
+            font-size: 32px; 
+            font-weight: 700; 
+            margin-bottom: 5px; 
+            color: #fff;
+            text-shadow: 0 0 10px #fff, 0 0 20px #fff;
+            animation: pulse 1.5s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { opacity: 0.7; text-shadow: 0 0 10px #fff; }
+            to { opacity: 1; text-shadow: 0 0 25px #fff, 0 0 35px #fff; }
+        }
+
+        .status {
+            font-size: 12px;
+            color: #00ff00;
+            margin-bottom: 25px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* --- ปุ่มกด --- */
         .links { display: flex; flex-direction: column; gap: 15px; }
 
         .link-card {
-            background: rgba(255, 255, 255, 0.08);
-            padding: 14px;
-            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 16px;
+            border-radius: 15px;
             text-decoration: none;
             color: white;
             font-weight: 500;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            gap: 12px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        /* ปุ่มเรืองแสงตอนเอาเมาส์ชี้ */
         .link-card:hover {
-            background: rgba(255, 255, 255, 0.25);
-            transform: translateY(-5px) scale(1.03);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4), 0 0 40px rgba(255, 255, 255, 0.2);
-            color: #fff;
+            background: #fff;
+            color: #000;
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.4);
         }
+
+        .link-card i { font-size: 1.2rem; }
+
     </style>
 </head>
 <body>
+
+    <div class="particles"></div>
 
     <div class="container">
         <img src="FB_IMG_1699721840964.jpg" alt="Profile" class="profile-img">
         
         <h1>DEEBOOK</h1>
-        <p>I hope to get to know you ✨</p>
+        <p class="status">● ONLINE AND READY</p>
 
         <div class="links">
-            <a href="https://www.facebook.com/share/1Ayx2zDfHo/" target="_blank" class="link-card">Facebook</a>
-            <a href="https://discord.com/users/563742272462651410" target="_blank" class="link-card">Discord</a>
-            <a href="https://steamcommunity.com/profiles/76561199128294970/" target="_blank" class="link-card">Steam</a>
+            <a href="https://www.facebook.com/share/1Ayx2zDfHo/" target="_blank" class="link-card">
+                <i class="fab fa-facebook-f"></i> FACEBOOK
+            </a>
+            <a href="https://discord.com/users/563742272462651410" target="_blank" class="link-card">
+                <i class="fab fa-discord"></i> DISCORD
+            </a>
+            <a href="https://steamcommunity.com/profiles/76561199128294970/" target="_blank" class="link-card">
+                <i class="fab fa-steam"></i> STEAM STORE
+            </a>
         </div>
     </div>
 
