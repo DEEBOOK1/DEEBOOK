@@ -11,7 +11,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Kanit', sans-serif; }
 
         body {
-            background: #050505; /* ดำสนิทแบบลึก */
+            background: #050505;
             height: 100vh;
             display: flex;
             align-items: center;
@@ -20,7 +20,6 @@
             overflow: hidden;
         }
 
-        /* --- ส่วนที่เพิ่มใหม่สำหรับวิดีโอ --- */
         #bg-video {
             position: fixed;
             top: 0;
@@ -28,12 +27,10 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            z-index: -1; /* ให้อยู่หลังสุด */
-            opacity: 0.4; /* ปรับความเข้ม/จาง ตรงนี้ (0.1 คือจางมาก - 1.0 คือชัดเท่าต้นฉบับ) */
+            z-index: -1;
+            opacity: 0.4;
         }
-        /* --------------------------- */
 
-        /* เอฟเฟกต์แสงฟุ้งๆ ด้านหลังกล่อง */
         .bg-glow {
             position: absolute;
             width: 300px;
@@ -76,11 +73,22 @@
         h1 { 
             font-size: 30px; 
             font-weight: 700; 
-            margin-bottom: 30px; /* เพิ่มระยะห่างแทนที่จุด Online */
+            margin-bottom: 8px; /* ปรับระยะห่างให้พอดีกับ Bio */
             letter-spacing: 3px;
             color: #fff;
             text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
         }
+
+        /* --- ส่วนตกแต่ง Bio ที่เพิ่มใหม่ --- */
+        .bio {
+            font-size: 14px;
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+            font-style: italic;
+        }
+        /* --------------------------- */
 
         .links { display: flex; flex-direction: column; gap: 18px; }
 
@@ -100,7 +108,6 @@
             transition: all 0.3s ease;
         }
 
-        /* เอฟเฟกต์ตอนชี้: เน้นความสว่างและเงาขาว */
         .link-card:hover {
             background: #fff;
             color: #000;
@@ -125,6 +132,7 @@
         <img src="FB_IMG_1699721840964.jpg" alt="Profile" class="profile-img">
         
         <h1>DEEBOOK</h1>
+        <p class="bio">I hope to get to know you</p>
 
         <div class="links">
             <a href="https://www.facebook.com/share/1Ayx2zDfHo/" target="_blank" class="link-card">
@@ -141,6 +149,3 @@
 
 </body>
 </html>
-
-
-
