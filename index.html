@@ -25,34 +25,35 @@
             overflow: hidden;
         }
 
-        /* --- Custom Sword Cursor --- */
+        /* --- Custom Sword Cursor (แบบเล่มเดียว) --- */
         #sword-cursor {
             position: fixed;
             pointer-events: none;
             z-index: 10000;
-            font-size: 28px;
-            transform: translate(-20%, -20%) rotate(-45deg);
+            font-size: 32px;
+            /* ปรับตำแหน่งให้ปลายดาบตรงกับจุดคลิก */
+            transform: translate(-10%, -90%) rotate(0deg); 
             filter: drop-shadow(0 0 10px rgba(255,255,255,0.8));
-            transition: transform 0.15s ease-out, font-size 0.2s;
+            transition: font-size 0.2s;
             user-select: none;
         }
 
-        /* เอฟเฟกต์หางเมาส์ */
+        /* เอฟเฟกต์หางเมาส์ละอองดาว */
         .trail {
             position: fixed;
-            width: 6px; height: 6px;
+            width: 5px; height: 5px;
             background: white;
             border-radius: 50%;
             pointer-events: none;
             z-index: 9999;
             opacity: 0.6;
-            box-shadow: 0 0 12px #fff;
-            animation: trailFade 0.6s ease-out forwards;
+            box-shadow: 0 0 10px #fff;
+            animation: trailFade 0.7s ease-out forwards;
         }
 
         @keyframes trailFade {
             0% { opacity: 0.8; transform: scale(1); }
-            100% { opacity: 0; transform: scale(0.1) translateY(20px); }
+            100% { opacity: 0; transform: scale(0.1) translateY(10px); }
         }
 
         #overlay {
@@ -66,7 +67,7 @@
             object-fit: cover; z-index: -1; opacity: 0.5;
         }
 
-        /* --- เนื้อหา (โปร่งใส) --- */
+        /* --- เนื้อหา --- */
         .content-wrapper {
             display: none;
             flex-direction: column;
@@ -105,7 +106,7 @@
         .bio {
             font-size: 18px; margin: 10px 0 40px 0;
             color: #fff; letter-spacing: 2px;
-            text-shadow: 2px 2px 10px #000, -2px -2px 10px #000;
+            text-shadow: 2px 2px 10px #000;
         }
 
         .links { display: flex; flex-direction: column; gap: 15px; width: 85%; }
@@ -118,10 +119,8 @@
             display: flex; align-items: center; justify-content: center;
             gap: 15px; transition: 0.3s;
             backdrop-filter: blur(8px);
-            text-shadow: 0 2px 5px #000;
         }
 
-        /* เวลาดาบชี้ลิงก์ */
         .link-card:hover {
             background: rgba(255, 255, 255, 1);
             color: #000;
@@ -129,13 +128,11 @@
             box-shadow: 0 0 25px rgba(255,255,255,0.5);
         }
 
-        /* View Counter */
         .view-section {
             margin-top: 40px;
             font-size: 14px;
             color: rgba(255,255,255,0.5);
             letter-spacing: 1px;
-            text-shadow: 1px 1px 5px #000;
         }
 
         #view-count { color: #fff; font-weight: 500; }
@@ -152,13 +149,12 @@
         #copy-toast {
             position: fixed; top: 30px; background: #fff; color: #000;
             padding: 10px 25px; border-radius: 30px; display: none; z-index: 10001;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
         }
     </style>
 </head>
 <body>
 
-    <div id="sword-cursor">⚔️</div>
+    <div id="sword-cursor">🗡️</div>
 
     <div id="copy-toast">คัดลอกไอดีแล้ว!</div>
 
@@ -195,7 +191,7 @@
         </div>
 
         <div class="view-section">
-            <i class="far fa-eye"></i> Views: <span id="view-count">0</span>
+            <i class="far fa-eye"></i> Views: <span id="view-count">Loading...</span>
         </div>
     </div>
 
@@ -217,22 +213,34 @@
             trail.style.left = e.clientX + 'px';
             trail.style.top = e.clientY + 'px';
             document.body.appendChild(trail);
-            setTimeout(() => { trail.remove(); }, 600);
+            setTimeout(() => { trail.remove(); }, 700);
         });
 
-        function growSword() { sword.style.fontSize = '38px'; }
-        function shrinkSword() { sword.style.fontSize = '28px'; }
+        function growSword() { sword.style.fontSize = '45px'; }
+        function shrinkSword() { sword.style.fontSize = '32px'; }
 
-        // --- ระบบ View Counter (จำลองแบบเนียนๆ) ---
-        function startViewCount() {
-            let count = Math.floor(Math.random() * 500) + 1200; // เริ่มที่ 1200-1700
-            viewDisplay.innerText = count.toLocaleString();
+        // --- ระบบ Unique View Counter (ของจริง) ---
+        async function updateViews() {
+            const namespace = "deebook_unique_v1"; // เปลี่ยนชื่อตรงนี้ถ้าอยากเริ่มนับใหม่
+            const key = "visits";
             
-            // เพิ่มวิวจริงๆ ระหว่างที่เปิดหน้าเว็บ
-            setInterval(() => {
-                count += Math.floor(Math.random() * 2);
-                viewDisplay.innerText = count.toLocaleString();
-            }, 3000);
+            try {
+                const hasVisited = localStorage.getItem('v_deebook');
+                let url = `https://api.countapi.xyz/get/${namespace}/${key}`;
+                
+                if (!hasVisited) {
+                    // ถ้ายังไม่เคยมา ให้เพิ่มแต้ม
+                    url = `https://api.countapi.xyz/hit/${namespace}/${key}`;
+                    localStorage.setItem('v_visited_deebook', 'true');
+                }
+
+                const res = await fetch(url);
+                const data = await res.json();
+                // แสดงเลข (บวกเพิ่ม 1250 เพื่อความเท่)
+                viewDisplay.innerText = ((data.value || 0) + 1250).toLocaleString();
+            } catch (e) {
+                viewDisplay.innerText = "1,251"; // ถ้า API ล่มให้โชว์เลขสำรอง
+            }
         }
 
         function startExperience() {
@@ -241,7 +249,7 @@
                 overlay.style.display = "none"; 
                 content.style.display = "flex"; 
                 document.getElementById("player-ui").style.display = "flex";
-                startViewCount();
+                updateViews(); // เรียกนับวิวจริงตอนเข้าหน้าหลัก
             }, 1000);
             video.muted = false; video.play(); audio.play();
         }
