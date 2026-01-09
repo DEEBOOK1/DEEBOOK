@@ -50,7 +50,15 @@
             top: 0; left: 0; width: 100%; height: 100%;
             object-fit: cover;
             z-index: -1;
-            opacity: 0.6;
+            opacity: 0.5;
+        }
+
+        /* Canvas สำหรับหิมะ/อนุภาค */
+        #particles-canvas {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0;
+            pointer-events: none;
         }
 
         /* คอนโทรลเสียง */
@@ -69,15 +77,10 @@
             border: 1px solid rgba(255,255,255,0.1);
         }
 
-        #volume-slider {
-            width: 80px;
-            cursor: pointer;
-            accent-color: #fff;
-        }
+        #volume-slider { width: 80px; cursor: pointer; accent-color: #fff; }
 
-        /* จัดกึ่งกลางแนวตั้งให้ตรงเป๊ะ */
         .content-wrapper {
-            display: none; /* ซ่อนไว้ก่อน */
+            display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
@@ -93,10 +96,8 @@
             to { opacity: 1; transform: translateY(0); filter: blur(0); }
         }
 
-        /* รูปโปรไฟล์มีลูกเล่น Pulse */
         .profile-img {
-            width: 130px;
-            height: 130px;
+            width: 130px; height: 130px;
             border-radius: 50%;
             border: 3px solid rgba(255, 255, 255, 0.6);
             margin-bottom: 25px;
@@ -106,25 +107,16 @@
             transition: 0.5s ease;
         }
         
-        .profile-img:hover {
-            transform: scale(1.1);
-            border-color: #fff;
-            box-shadow: 0 0 40px rgba(255, 255, 255, 0.5);
-        }
-
         @keyframes profilePulse {
-            0% { box-shadow: 0 0 15px rgba(255, 255, 255, 0.2); }
+            0%, 100% { box-shadow: 0 0 15px rgba(255, 255, 255, 0.2); }
             50% { box-shadow: 0 0 35px rgba(255, 255, 255, 0.4); }
-            100% { box-shadow: 0 0 15px rgba(255, 255, 255, 0.2); }
         }
 
-        /* ชื่อมีแสงวิ่ง Glint */
         .glint-text {
             font-size: 42px;
             font-weight: 700;
             margin-bottom: 5px;
             letter-spacing: 4px;
-            display: inline-block;
             background: linear-gradient(to right, #fff 20%, #888 40%, #888 60%, #fff 80%);
             background-size: 200% auto;
             color: #fff;
@@ -132,28 +124,16 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             animation: shine 4s linear infinite;
-            text-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
         }
 
-        @keyframes shine {
-            to { background-position: 200% center; }
-        }
+        @keyframes shine { to { background-position: 200% center; } }
 
         .bio {
-            font-size: 15px;
-            font-weight: 300;
-            margin-bottom: 35px;
-            font-style: italic;
+            font-size: 15px; margin-bottom: 35px; font-style: italic;
             color: rgba(255, 255, 255, 0.9);
-            text-shadow: 1px 1px 5px rgba(0,0,0,0.5);
         }
 
-        .links {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            width: 100%;
-        }
+        .links { display: flex; flex-direction: column; gap: 15px; width: 100%; }
 
         .link-card {
             background: rgba(0, 0, 0, 0.3);
@@ -162,28 +142,53 @@
             border-radius: 50px;
             text-decoration: none;
             color: #fff;
-            font-weight: 500;
             border: 1px solid rgba(255, 255, 255, 0.2);
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 12px;
             transition: 0.3s all;
+            position: relative;
+            overflow: hidden;
         }
 
         .link-card:hover {
-            background: #fff;
+            background: rgba(255, 255, 255, 1);
             color: #000;
             transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+        }
+
+        /* แจ้งเตือนเวลา Copy Discord */
+        #copy-toast {
+            position: fixed;
+            top: 20px;
+            background: rgba(255,255,255,0.9);
+            color: #000;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            display: none;
+            z-index: 10000;
+            animation: fadeInDown 0.5s;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
 
+    <div id="copy-toast">คัดลอก Discord ID แล้ว!</div>
+
     <div id="overlay" onclick="startExperience()">
         <p>[ CLICK TO ENTER ]</p>
     </div>
+
+    <canvas id="particles-canvas"></canvas>
 
     <video id="bg-video" loop playsinline muted>
         <source src="0110.mp4" type="video/mp4">
@@ -200,18 +205,16 @@
 
     <div class="content-wrapper" id="main-content">
         <img src="FB_IMG_1699721840964.jpg" alt="Profile" class="profile-img">
-        
         <h1 class="glint-text">DEEBOOK</h1>
-        
         <p class="bio">อ่าน ทำ ไม</p>
 
         <div class="links">
             <a href="https://www.facebook.com/share/1Ayx2zDfHo/" target="_blank" class="link-card">
                 <i class="fab fa-facebook-f"></i> FACEBOOK
             </a>
-            <a href="https://discord.com/users/563742272462651410" target="_blank" class="link-card">
-                <i class="fab fa-discord"></i> DISCORD
-            </a>
+            <div onclick="copyDiscord('563742272462651410')" class="link-card" style="cursor: pointer;">
+                <i class="fab fa-discord"></i> DISCORD (CLICK TO COPY)
+            </div>
             <a href="https://steamcommunity.com/profiles/76561199128294970/" target="_blank" class="link-card">
                 <i class="fab fa-steam"></i> STEAM
             </a>
@@ -231,7 +234,7 @@
             overlay.style.opacity = "0";
             setTimeout(() => { 
                 overlay.style.display = "none"; 
-                content.style.display = "flex"; // เปลี่ยนเป็น flex เพื่อให้จัดกลางเป๊ะ
+                content.style.display = "flex"; 
                 playerUI.style.display = "flex";
             }, 1000);
 
@@ -239,27 +242,61 @@
             video.play();
             audio.volume = 0.5;
             audio.play();
+            initParticles(); // เริ่มระบบหิมะ
         }
 
+        // ระบบก๊อปปี้ Discord
+        function copyDiscord(id) {
+            navigator.clipboard.writeText(id);
+            const toast = document.getElementById('copy-toast');
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 2000);
+        }
+
+        // ระบบปรับเสียง
         volumeSlider.addEventListener("input", (e) => {
             audio.volume = e.target.value;
-            if (audio.volume == 0) {
-                muteBtn.classList.replace("fa-volume-up", "fa-volume-mute");
-            } else {
-                muteBtn.classList.replace("fa-volume-mute", "fa-volume-up");
-            }
+            muteBtn.className = audio.volume == 0 ? "fas fa-volume-mute" : "fas fa-volume-up";
         });
 
         function toggleMute() {
-            if (audio.muted) {
-                audio.muted = false;
-                muteBtn.classList.replace("fa-volume-mute", "fa-volume-up");
-            } else {
-                audio.muted = true;
-                muteBtn.classList.replace("fa-volume-up", "fa-volume-mute");
+            audio.muted = !audio.muted;
+            muteBtn.className = audio.muted ? "fas fa-volume-mute" : "fas fa-volume-up";
+        }
+
+        // --- ระบบหิมะ (Particles) ---
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function initParticles() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            for(let i=0; i<50; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    r: Math.random() * 2 + 1,
+                    d: Math.random() * 50,
+                    v: Math.random() * 0.5 + 0.2
+                });
             }
+            animate();
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
+            ctx.beginPath();
+            for(let p of particles) {
+                ctx.moveTo(p.x, p.y);
+                ctx.arc(p.x, p.y, p.r, 0, Math.PI*2, true);
+                p.y += p.v;
+                if(p.y > canvas.height) p.y = -10;
+            }
+            ctx.fill();
+            requestAnimationFrame(animate);
         }
     </script>
-
 </body>
 </html>
