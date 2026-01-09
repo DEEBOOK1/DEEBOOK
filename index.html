@@ -26,15 +26,21 @@
             top: 0; left: 0; width: 100%; height: 100%;
             object-fit: cover;
             z-index: -1;
-            opacity: 0.6; /* ปรับให้เข้มขึ้นนิดนึงเพื่อให้ตัวหนังสืออ่านง่าย */
+            opacity: 0.6;
         }
 
-        /* ส่วนเนื้อหาที่ลอยอยู่บนวิดีโอ */
+        /* ส่วนเนื้อหาที่ลอยอยู่บนวิดีโอ + อนิเมชั่นตอนปรากฏ */
         .content-wrapper {
             text-align: center;
             z-index: 10;
             width: 90%;
             max-width: 380px;
+            animation: fadeInBlur 1.5s ease-out; /* อนิเมชั่นตอนเปิดเว็บ */
+        }
+
+        @keyframes fadeInBlur {
+            from { opacity: 0; transform: translateY(20px); filter: blur(10px); }
+            to { opacity: 1; transform: translateY(0); filter: blur(0); }
         }
 
         .profile-img {
@@ -54,7 +60,7 @@
         }
 
         h1 { 
-            font-size: 36px; /* ขยายขนาดชื่อให้เด่นขึ้นเพราะไม่มีกล่องแล้ว */
+            font-size: 36px; 
             font-weight: 700; 
             margin-bottom: 5px; 
             letter-spacing: 4px;
@@ -62,6 +68,7 @@
             text-shadow: 2px 2px 10px rgba(0,0,0,0.8), 0 0 20px rgba(255,255,255,0.3);
         }
 
+        /* แก้ไข Bio ให้เป็นตัวเอียง */
         .bio {
             font-size: 15px;
             font-weight: 300;
@@ -69,15 +76,16 @@
             margin-bottom: 35px;
             letter-spacing: 1px;
             text-shadow: 1px 1px 5px rgba(0,0,0,0.8);
+            font-style: italic; /* กลับมาเอียงแล้วครับ */
         }
 
         .links { display: flex; flex-direction: column; gap: 15px; }
 
         .link-card {
-            background: rgba(0, 0, 0, 0.3); /* ใส่ความดำจางๆ ให้ปุ่มพออ่านง่าย */
-            backdrop-filter: blur(5px); /* เบลอหลังปุ่มนิดเดียว */
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
             padding: 16px;
-            border-radius: 50px; /* เปลี่ยนเป็นทรงมนรีจะดูทันสมัยกว่า */
+            border-radius: 50px;
             text-decoration: none;
             color: #fff;
             font-weight: 500;
