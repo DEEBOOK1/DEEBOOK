@@ -24,7 +24,7 @@
             overflow: hidden;
         }
 
-        /* --- Scanlines (Overlay) --- */
+        /* --- Scanlines --- */
         body::before {
             content: " ";
             position: fixed;
@@ -35,37 +35,45 @@
             pointer-events: none;
         }
 
-        /* --- Improved Sword Cursor --- */
-        #sword-cursor {
+        /* --- New Sword Cursor (Rotation Enabled) --- */
+        #sword-container {
             position: fixed;
             left: 0; top: 0;
             pointer-events: none;
             z-index: 10000;
-            font-size: 35px;
-            transform: translate(-20%, -80%);
-            filter: drop-shadow(0 0 10px #fff);
-            will-change: transform; 
-            user-select: none;
+            will-change: transform;
+            transition: transform 0.1s ease-out;
         }
 
-        .slash-anim {
-            animation: slashEffect 0.2s ease-out forwards;
+        #sword-icon {
+            font-size: 45px;
+            display: inline-block;
+            filter: drop-shadow(0 0 15px rgba(255,255,255,0.8));
+            transform: translate(-20%, -80%) rotate(-15deg);
+            transition: transform 0.2s;
         }
 
-        @keyframes slashEffect {
-            0% { transform: translate(-20%, -80%) rotate(0deg) scale(1); }
-            50% { transform: translate(-20%, -80%) rotate(45deg) scale(1.4); }
-            100% { transform: translate(-20%, -80%) rotate(0deg) scale(1); }
+        /* เอฟเฟกต์หมุนตอนคลิก */
+        .spin-slash {
+            animation: fastSpin 0.3s cubic-bezier(0.17, 0.89, 0.32, 1.28) forwards;
         }
 
-        .trail {
+        @keyframes fastSpin {
+            0% { transform: translate(-20%, -80%) rotate(-15deg) scale(1); }
+            50% { transform: translate(-20%, -80%) rotate(180deg) scale(1.5); filter: brightness(2); }
+            100% { transform: translate(-20%, -80%) rotate(345deg) scale(1); }
+        }
+
+        /* หางดาบแบบสะเก็ดไฟ (Particles) */
+        .slash-particle {
             position: fixed;
-            height: 1px;
+            width: 4px;
+            height: 4px;
             background: #fff;
+            border-radius: 50%;
             pointer-events: none;
             z-index: 9999;
-            opacity: 0.8;
-            transform-origin: left center;
+            box-shadow: 0 0 10px #fff;
         }
 
         /* --- Profile UI --- */
@@ -119,78 +127,41 @@
         }
 
         @keyframes pulseAura {
-            0% { transform: scale(0.95); opacity: 0.5; box-shadow: 0 0 10px #fff; }
-            100% { transform: scale(1.05); opacity: 1; box-shadow: 0 0 30px #fff; }
+            0% { transform: scale(0.95); opacity: 0.5; }
+            100% { transform: scale(1.05); opacity: 1; }
         }
 
         @keyframes spinRing { to { transform: rotate(360deg); } }
 
         .glint-text {
-            font-size: 52px;
-            font-weight: 800;
-            letter-spacing: 5px;
-            color: #fff;
-            text-shadow: 0 0 20px rgba(255,255,255,0.6);
-            margin-bottom: 5px;
+            font-size: 52px; font-weight: 800; letter-spacing: 5px; color: #fff;
+            text-shadow: 0 0 20px rgba(255,255,255,0.6); margin-bottom: 5px;
         }
 
-        .bio {
-            font-size: 16px; color: #bbb;
-            margin-bottom: 30px; letter-spacing: 3px;
-        }
+        .bio { font-size: 16px; color: #bbb; margin-bottom: 30px; letter-spacing: 3px; }
 
-        /* --- New Link Cards Style (เปลี่ยนแค่ตรงนี้ให้เท่ขึ้น) --- */
         .links { display: flex; flex-direction: column; gap: 15px; width: 85%; }
 
         .link-card {
             background: rgba(255, 255, 255, 0.05);
-            padding: 16px;
-            border-radius: 0px; /* เป็นเหลี่ยมคมๆ จะเท่กว่า */
-            text-decoration: none; 
-            color: #fff;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            position: relative;
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            gap: 15px; 
-            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-            backdrop-filter: blur(5px);
-            overflow: hidden;
+            padding: 16px; border-radius: 0px; text-decoration: none; color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2); position: relative;
+            display: flex; align-items: center; justify-content: center; gap: 15px;
+            transition: 0.3s ease; backdrop-filter: blur(5px); overflow: hidden;
         }
 
-        /* เอฟเฟกต์แสงวิ่งตอนเมาส์วาง */
         .link-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            content: ''; position: absolute; top: 0; left: -100%;
+            width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
             transition: 0.5s;
         }
 
         .link-card:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: #fff;
-            transform: scale(1.02);
-            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.1); border-color: #fff;
+            transform: scale(1.02); box-shadow: 0 0 20px rgba(255,255,255,0.2);
         }
 
-        .link-card:hover::before {
-            left: 100%;
-        }
-
-        .link-card i {
-            font-size: 20px;
-            transition: 0.3s;
-        }
-
-        .link-card:hover i {
-            transform: scale(1.2);
-            filter: drop-shadow(0 0 5px #fff);
-        }
-
-        /* --- End Link Cards Style --- */
+        .link-card:hover::before { left: 100%; }
 
         #overlay {
             position: fixed; inset: 0; background: #000; z-index: 9999;
@@ -207,7 +178,9 @@
 </head>
 <body>
 
-    <div id="sword-cursor">🗡️</div>
+    <div id="sword-container">
+        <div id="sword-icon">🗡️</div>
+    </div>
 
     <div id="overlay" onclick="startExperience()">
         <p>[ CLICK TO START ]</p>
@@ -219,7 +192,7 @@
 
     <audio id="myAudio" loop><source src="11er.mp3" type="audio/mpeg"></audio>
 
-    <div class="audio-player" id="player-ui">
+    <div id="player-ui">
         <i class="fas fa-volume-up"></i>
         <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.5" style="accent-color: #fff; width: 60px;">
     </div>
@@ -248,43 +221,61 @@
     </div>
 
     <script>
-        const sword = document.getElementById('sword-cursor');
+        const container = document.getElementById('sword-container');
+        const sword = document.getElementById('sword-icon');
         let mouseX = 0, mouseY = 0;
         let swordX = 0, swordY = 0;
+        let prevX = 0;
 
         document.addEventListener('mousemove', (e) => {
             mouseX = e.clientX;
             mouseY = e.clientY;
-            createTrail(e.clientX, e.clientY);
+
+            // เอียงดาบตามทิศทางขยับเมาส์
+            let diffX = e.clientX - prevX;
+            let tilt = diffX * 2; // ยิ่งลากเร็วยิ่งเอียง
+            if(tilt > 45) tilt = 45;
+            if(tilt < -45) tilt = -45;
+            
+            sword.style.transform = `translate(-20%, -80%) rotate(${tilt - 15}deg)`;
+            prevX = e.clientX;
+
+            createSpark(e.clientX, e.clientY);
         });
 
         function animate() {
             swordX += (mouseX - swordX) * 0.15;
             swordY += (mouseY - swordY) * 0.15;
-            sword.style.transform = `translate(${swordX}px, ${swordY}px) translate(-20%, -80%)`;
+            container.style.transform = `translate(${swordX}px, ${swordY}px)`;
             requestAnimationFrame(animate);
         }
         animate();
 
-        function createTrail(x, y) {
-            const trail = document.createElement('div');
-            trail.className = 'trail';
-            trail.style.left = x + 'px';
-            trail.style.top = y + 'px';
-            trail.style.width = '20px';
-            document.body.appendChild(trail);
-            
-            const anim = trail.animate([
-                { opacity: 1, transform: 'scaleY(1)' },
-                { opacity: 0, transform: 'scaleY(0)' }
-            ], { duration: 400 });
-            
-            anim.onfinish = () => trail.remove();
+        // ระบบหางดาบแบบ Particle
+        function createSpark(x, y) {
+            const p = document.createElement('div');
+            p.className = 'slash-particle';
+            p.style.left = x + 'px';
+            p.style.top = y + 'px';
+            document.body.appendChild(p);
+
+            const destinationX = x + (Math.random() - 0.5) * 50;
+            const destinationY = y + (Math.random() - 0.5) * 50;
+
+            const anim = p.animate([
+                { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+                { transform: `translate(${destinationX - x}px, ${destinationY - y}px) scale(0)`, opacity: 0 }
+            ], { duration: 500, easing: 'ease-out' });
+
+            anim.onfinish = () => p.remove();
         }
 
+        // คลิกแล้วหมุนฟัน 360 องศา
         document.addEventListener('mousedown', () => {
-            sword.classList.add('slash-anim');
-            setTimeout(() => sword.classList.remove('slash-anim'), 200);
+            sword.classList.add('spin-slash');
+            setTimeout(() => {
+                sword.classList.remove('spin-slash');
+            }, 300);
         });
 
         function startExperience() {
