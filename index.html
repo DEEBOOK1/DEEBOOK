@@ -24,7 +24,7 @@
             overflow: hidden;
         }
 
-        /* --- Scanlines (Overlay) --- */
+        /* --- Scanlines --- */
         body::before {
             content: " ";
             position: fixed;
@@ -35,7 +35,7 @@
             pointer-events: none;
         }
 
-        /* --- Improved Sword Cursor --- */
+        /* --- Smooth Sword Cursor --- */
         #sword-cursor {
             position: fixed;
             left: 0; top: 0;
@@ -44,7 +44,7 @@
             font-size: 35px;
             transform: translate(-20%, -80%);
             filter: drop-shadow(0 0 10px #fff);
-            will-change: transform; /* ช่วยให้ลื่นขึ้น */
+            will-change: transform;
             user-select: none;
         }
 
@@ -80,15 +80,14 @@
             align-items: center;
             z-index: 10;
             width: 100%;
-            max-width: 450px;
+            max-width: 400px;
             animation: fadeIn 1s ease-out;
         }
 
-        /* --- กรอบโปรไฟล์แบบใหม่ (Cyber Aura) --- */
         .profile-box {
             position: relative;
-            width: 160px; height: 160px;
-            margin-bottom: 20px;
+            width: 150px; height: 150px;
+            margin-bottom: 25px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -103,16 +102,8 @@
             animation: pulseAura 2s infinite alternate;
         }
 
-        .spinning-ring {
-            position: absolute;
-            width: 115%; height: 115%;
-            border-radius: 50%;
-            border: 1px dashed rgba(255,255,255,0.5);
-            animation: spinRing 10s linear infinite;
-        }
-
         .profile-img {
-            width: 140px; height: 140px;
+            width: 130px; height: 130px;
             border-radius: 50%;
             object-fit: cover;
             z-index: 5;
@@ -120,57 +111,111 @@
         }
 
         @keyframes pulseAura {
-            0% { transform: scale(0.95); opacity: 0.5; box-shadow: 0 0 10px #fff; }
-            100% { transform: scale(1.05); opacity: 1; box-shadow: 0 0 30px #fff; }
+            0% { transform: scale(0.95); opacity: 0.5; }
+            100% { transform: scale(1.05); opacity: 1; }
         }
 
-        @keyframes spinRing { to { transform: rotate(360deg); } }
-
-        /* --- Typography --- */
         .glint-text {
-            font-size: 52px;
+            font-size: 48px;
             font-weight: 800;
             letter-spacing: 5px;
             color: #fff;
             text-shadow: 0 0 20px rgba(255,255,255,0.6);
-            margin-bottom: 5px;
         }
 
         .bio {
-            font-size: 16px; color: #bbb;
-            margin-bottom: 30px; letter-spacing: 3px;
+            font-size: 14px; color: #888;
+            margin-bottom: 30px; letter-spacing: 5px; text-transform: uppercase;
         }
 
-        /* --- Buttons --- */
-        .links { display: flex; flex-direction: column; gap: 12px; width: 80%; }
+        /* --- New Link Cards (Cyber Design) --- */
+        .links { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 15px; 
+            width: 100%; 
+        }
 
         .link-card {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px; border-radius: 5px; /* เปลี่ยนเป็นเหลี่ยมมนแบบเท่ๆ */
-            text-decoration: none; color: #fff;
-            border-left: 3px solid #fff;
-            display: flex; align-items: center; justify-content: center;
-            gap: 15px; transition: 0.2s;
-            backdrop-filter: blur(10px);
+            position: relative;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 18px;
+            text-decoration: none;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(15px);
+            clip-path: polygon(0% 0%, 95% 0%, 100% 25%, 100% 100%, 5% 100%, 0% 75%);
+        }
+
+        /* เส้นไฟวิ่งข้างใต้ */
+        .link-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: -100%;
+            width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, #fff, transparent);
+            transition: 0.5s;
         }
 
         .link-card:hover {
-            background: #fff;
-            color: #000;
-            transform: translateX(10px);
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(8px) skewX(-2deg);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: -10px 0 20px rgba(255,255,255,0.1);
         }
 
+        .link-card:hover::after {
+            left: 100%;
+        }
+
+        .link-content {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-weight: 500;
+            letter-spacing: 2px;
+        }
+
+        .link-content i {
+            font-size: 20px;
+            transition: 0.3s;
+        }
+
+        .link-card:hover .link-content i {
+            transform: scale(1.2);
+            filter: drop-shadow(0 0 8px #fff);
+        }
+
+        .link-card .arrow {
+            opacity: 0.3;
+            font-size: 12px;
+            transition: 0.3s;
+        }
+
+        .link-card:hover .arrow {
+            opacity: 1;
+            transform: translateX(5px);
+        }
+
+        /* --- Other Elements --- */
         #overlay {
             position: fixed; inset: 0; background: #000; z-index: 9999;
             display: flex; align-items: center; justify-content: center; color: #fff;
-        }
-        
-        #player-ui {
-            position: fixed; bottom: 20px; right: 20px; z-index: 101;
-            display: none; background: rgba(0,0,0,0.7); padding: 10px; border-radius: 20px;
+            letter-spacing: 10px; font-weight: 300;
         }
 
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        #player-ui {
+            position: fixed; bottom: 20px; right: 20px; z-index: 101;
+            display: none; background: rgba(0,0,0,0.8); padding: 12px; 
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 4px;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -178,7 +223,7 @@
     <div id="sword-cursor">🗡️</div>
 
     <div id="overlay" onclick="startExperience()">
-        <p>[ CLICK TO START ]</p>
+        <p>INITIALIZING...</p>
     </div>
 
     <video id="bg-video" loop playsinline muted>
@@ -187,7 +232,7 @@
 
     <audio id="myAudio" loop><source src="11er.mp3" type="audio/mpeg"></audio>
 
-    <div class="audio-player" id="player-ui">
+    <div id="player-ui">
         <i class="fas fa-volume-up"></i>
         <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.5" style="accent-color: #fff; width: 60px;">
     </div>
@@ -195,22 +240,35 @@
     <div class="content-wrapper" id="main-content">
         <div class="profile-box">
             <div class="aura"></div>
-            <div class="spinning-ring"></div>
             <img src="FB_IMG_1699721840964.jpg" alt="Profile" class="profile-img">
         </div>
 
         <h1 class="glint-text">DEEBOOK</h1>
-        <p class="bio">อ่านทำไม</p>
+        <p class="bio">Web Developer & Gamer</p>
 
         <div class="links">
             <a href="https://www.facebook.com/share/1Ayx2zDfHo/" target="_blank" class="link-card">
-                <i class="fab fa-facebook-f"></i> FACEBOOK
+                <div class="link-content">
+                    <i class="fab fa-facebook-f"></i>
+                    <span>FACEBOOK</span>
+                </div>
+                <i class="fas fa-chevron-right arrow"></i>
             </a>
+
             <div onclick="copyDiscord('563742272462651410')" class="link-card" style="cursor: pointer;">
-                <i class="fab fa-discord"></i> DISCORD
+                <div class="link-content">
+                    <i class="fab fa-discord"></i>
+                    <span>DISCORD</span>
+                </div>
+                <i class="fas fa-chevron-right arrow"></i>
             </div>
+
             <a href="https://steamcommunity.com/profiles/76561199128294970/" target="_blank" class="link-card">
-                <i class="fab fa-steam"></i> STEAM
+                <div class="link-content">
+                    <i class="fab fa-steam"></i>
+                    <span>STEAM</span>
+                </div>
+                <i class="fas fa-chevron-right arrow"></i>
             </a>
         </div>
     </div>
@@ -220,7 +278,6 @@
         let mouseX = 0, mouseY = 0;
         let swordX = 0, swordY = 0;
 
-        // --- ดาบลื่นไหลแบบ Smooth Follow ---
         document.addEventListener('mousemove', (e) => {
             mouseX = e.clientX;
             mouseY = e.clientY;
@@ -228,10 +285,8 @@
         });
 
         function animate() {
-            // ความเร็วในการตาม (0.1 = ลื่นมาก, 1 = ติดมือ)
             swordX += (mouseX - swordX) * 0.15;
             swordY += (mouseY - swordY) * 0.15;
-            
             sword.style.transform = `translate(${swordX}px, ${swordY}px) translate(-20%, -80%)`;
             requestAnimationFrame(animate);
         }
@@ -242,18 +297,17 @@
             trail.className = 'trail';
             trail.style.left = x + 'px';
             trail.style.top = y + 'px';
-            trail.style.width = '20px';
+            trail.style.width = '25px';
             document.body.appendChild(trail);
             
             const anim = trail.animate([
-                { opacity: 1, transform: 'scaleY(1)' },
+                { opacity: 1, transform: 'scaleY(1.5)' },
                 { opacity: 0, transform: 'scaleY(0)' }
             ], { duration: 400 });
             
             anim.onfinish = () => trail.remove();
         }
 
-        // --- ระบบคลิกฟัน ---
         document.addEventListener('mousedown', () => {
             sword.classList.add('slash-anim');
             setTimeout(() => sword.classList.remove('slash-anim'), 200);
@@ -272,7 +326,13 @@
 
         function copyDiscord(id) {
             navigator.clipboard.writeText(id);
-            alert("คัดลอก Discord ID แล้ว!");
+            // เปลี่ยน alert เป็นเอฟเฟกต์เท่ๆ แทนถ้าต้องการ
+            const btn = event.currentTarget;
+            const originalText = btn.querySelector('span').innerText;
+            btn.querySelector('span').innerText = "COPIED!";
+            setTimeout(() => {
+                btn.querySelector('span').innerText = originalText;
+            }, 2000);
         }
 
         document.getElementById("volume-slider").addEventListener("input", (e) => {
