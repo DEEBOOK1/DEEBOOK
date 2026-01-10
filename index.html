@@ -24,43 +24,42 @@
             overflow: hidden;
         }
 
-        /* --- Sword Cursor (Pointy Tip Version) --- */
+        /* --- Sword Cursor (Mini Version) --- */
         #sword-container {
             position: fixed;
             left: 0; top: 0;
             pointer-events: none;
             z-index: 10000;
             will-change: left, top;
-            /* ย้ายตำแหน่งให้ปลายดาบ (ด้านบนซ้ายของรูป) อยู่ที่ตำแหน่งเมาส์ */
-            transform: translate(-5px, -5px) rotate(0deg);
+            /* ปรับให้ปลายดาบอยู่ตรงตำแหน่งเมาส์พอดี */
+            transform: translate(-2px, -2px);
         }
 
         #sword-img {
-            width: 110px; /* ขนาดกำลังดี ไม่ใหญ่เกินไป */
+            width: 45px; /* ขนาดใหญ่กว่าเมาส์ปกตินิดเดียวตามสั่ง */
             height: auto;
-            /* ปรับให้รูปเอียง 45 องศาเพื่อให้ปลายดาบชี้ไปที่เมาส์พอดี */
-            transform: rotate(-135deg); 
-            filter: drop-shadow(0 0 10px rgba(255,255,255,0.7));
+            /* หมุนดาบให้ปลายชี้ไปที่จุดเมาส์ */
+            transform: rotate(-135deg);
+            filter: drop-shadow(0 0 5px rgba(255,255,255,0.8));
         }
 
         .spin-slash {
-            animation: tipPoke 0.2s ease-out forwards;
+            animation: fastPoke 0.15s ease-out;
         }
 
-        /* ท่าจิ้มด้วยปลายดาบเมื่อกดคลิก */
-        @keyframes tipPoke {
+        @keyframes fastPoke {
             0% { transform: rotate(-135deg) scale(1); }
-            50% { transform: rotate(-135deg) scale(1.2) translate(10px, -10px); filter: brightness(2); }
+            50% { transform: rotate(-135deg) scale(1.3) translate(5px, -5px); }
             100% { transform: rotate(-135deg) scale(1); }
         }
 
         .slash-line {
             position: fixed;
-            height: 2px;
+            height: 1.5px;
             background: #fff;
             pointer-events: none;
             z-index: 9999;
-            box-shadow: 0 0 8px #fff;
+            box-shadow: 0 0 5px #fff;
             transform-origin: left center;
         }
 
@@ -87,11 +86,9 @@
 
         .glint-text {
             font-size: 60px; font-weight: 900; letter-spacing: 8px;
-            text-shadow: 0 0 15px rgba(255,255,255,0.8), 0 0 30px rgba(255,255,255,0.3);
+            text-shadow: 0 0 15px rgba(255,255,255,0.8);
             margin-bottom: 5px;
         }
-
-        .bio { font-size: 18px; color: #eee; margin-bottom: 35px; letter-spacing: 4px; text-shadow: 2px 2px 5px #000; }
 
         .profile-box {
             position: relative; width: 160px; height: 160px; margin-bottom: 25px;
@@ -108,9 +105,9 @@
             border-radius: 50%; object-fit: cover; border: 4px solid #000;
         }
 
-        .social-icons { display: flex; gap: 40px; position: relative; }
-        .icon-link { color: #fff; font-size: 38px; transition: 0.3s; filter: drop-shadow(0 0 5px #fff); text-decoration: none; }
-        .icon-link:hover { transform: translateY(-8px) scale(1.2); filter: drop-shadow(0 0 20px #fff); }
+        .social-icons { display: flex; gap: 40px; }
+        .icon-link { color: #fff; font-size: 38px; transition: 0.3s; filter: drop-shadow(0 0 5px #fff); }
+        .icon-link:hover { transform: translateY(-8px) scale(1.2); }
 
         #player-ui {
             position: fixed; bottom: 20px; right: 20px; z-index: 101;
@@ -126,7 +123,7 @@
 <body>
 
     <div id="sword-container">
-        <img src="https://www.pngmart.com/files/1/Katana-Transparent-Background.png" id="sword-img" alt="Katana Blade">
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAMAAAB49y9FAAAAbFBMVEUAAAD///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////89076BAAAAJXRSTlMAAQQIDBEYJicqKy4zOT5BSElOT1JTVVdYWV5fYWJlb3FzdXh6fS6mYm8AAAGRSURBVGje7ZpXDsMgDAXBSCEk999/shWq9AnSPlT5mS9GeI7NGRvY6YfD4fD/I8YID6mS8khI+SREO8mI7X0N+Y7I5pS2uK9WCH3I+W+I7G9IDu376pC9fUhL3VcHIs0fIvUnInW5iNRvIto9RNpLRBpCZNpXRLYnIrshslsj+0fky0ZkN0f2nsh/Sj4XkVsh+VpErkXkVkh+FpFrEfkgIn0i0icifSJ7Ty76vPAnIn8p0ici/SPSPyL9I7L758XnO+AnIp9LpC8k0icS6RuJ9I1E+kYifSPR30XkT0Xkd0Xkd0Xkd0Xkd0Xkd0XkV0T0XkT0XkT0XkT0XkT0XkT0XkT0XkS0i4j0WUS0m4h0O4mI9lZEpM8ios9nEdHeioh0O4mI9lZEpM8i0mYR0S4i0mYR0S4ios9HRETrR0RE60dERD9ExE9E/ETEzyOidSGi1SGiNSKiNSKiNSKiNSKiNSKiNSKiNSL6KiKidxHRu4joXUT0LiJ6FxG9i4jeRUTvIqJ3EdHn4fBfeAMl/R3z070/fAAAAABJRU5ErkJggg==" id="sword-img">
     </div>
 
     <div id="overlay" onclick="startExperience()">
@@ -165,7 +162,6 @@
         let lastX = 0, lastY = 0;
 
         document.addEventListener('mousemove', (e) => {
-            // เลื่อนตำแหน่ง container ไปตามเมาส์
             container.style.left = e.clientX + 'px';
             container.style.top = e.clientY + 'px';
 
@@ -187,13 +183,13 @@
             const angle = Math.atan2(y1 - y2, x1 - x2);
             line.style.transform = `rotate(${angle}rad)`;
             document.body.appendChild(line);
-            line.animate([{ opacity: 0.7 }, { opacity: 0 }], { duration: 300, fill: 'forwards' });
+            line.animate([{ opacity: 0.6 }, { opacity: 0 }], { duration: 300, fill: 'forwards' });
             setTimeout(() => line.remove(), 300);
         }
 
         document.addEventListener('mousedown', () => {
             sword.classList.add('spin-slash');
-            setTimeout(() => sword.classList.remove('spin-slash'), 200);
+            setTimeout(() => sword.classList.remove('spin-slash'), 150);
         });
 
         function startExperience() {
@@ -216,9 +212,8 @@
         });
 
         function copyDiscord(id) {
-            navigator.clipboard.writeText(id).then(() => {
-                alert('Discord ID Copied!');
-            });
+            navigator.clipboard.writeText(id);
+            alert('Copied!');
         }
     </script>
 </body>
