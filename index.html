@@ -24,6 +24,16 @@
             overflow: hidden;
         }
 
+        /* เพิ่ม Gradient จางๆ กลางจอเพื่อให้ข้อความเด่น */
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle, rgba(0,0,0,0) 0%, rgba(0,0,0,0.4) 100%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
         #bg-video {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             object-fit: cover; z-index: -1; opacity: 0.5;
@@ -84,70 +94,87 @@
             align-items: center;
             z-index: 10;
             animation: fadeIn 0.8s ease-out;
+            text-align: center;
         }
 
         .profile-box {
             position: relative;
             width: 160px; height: 160px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         .aura {
             position: absolute; width: 100%; height: 100%;
-            border-radius: 50%; border: 2px solid #fff;
-            box-shadow: 0 0 20px #fff; animation: pulse 1.5s infinite alternate;
+            border-radius: 50%; border: 2.5px solid #fff;
+            box-shadow: 0 0 30px rgba(255,255,255,0.8), inset 0 0 20px rgba(255,255,255,0.4); 
+            animation: pulse 1.5s infinite alternate;
         }
 
         .profile-img {
             position: absolute; top: 10px; left: 10px;
             width: 140px; height: 140px;
-            border-radius: 50%; object-fit: cover; border: 3px solid #000;
+            border-radius: 50%; object-fit: cover; border: 4px solid #000;
         }
 
-        @keyframes pulse { from { opacity: 0.4; transform: scale(0.95); } to { opacity: 1; transform: scale(1.05); } }
+        @keyframes pulse { from { opacity: 0.5; transform: scale(0.95); } to { opacity: 1; transform: scale(1.05); } }
 
+        /* ปรับชื่อให้เด่นขึ้นมาก */
         .glint-text {
-            font-size: 50px; font-weight: 800; letter-spacing: 5px;
-            text-shadow: 0 0 15px rgba(255,255,255,0.7);
+            font-size: 60px; font-weight: 900; letter-spacing: 8px;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255,255,255,0.8), 
+                         0 0 20px rgba(255,255,255,0.5),
+                         0 0 40px rgba(255,255,255,0.3);
+            margin-bottom: 5px;
         }
 
-        .bio { font-size: 14px; color: #aaa; margin-bottom: 25px; letter-spacing: 2px; }
+        /* ปรับ Bio ให้ชัดขึ้น */
+        .bio { 
+            font-size: 18px; 
+            color: #eee; 
+            margin-bottom: 35px; 
+            letter-spacing: 4px;
+            font-weight: 300;
+            text-shadow: 2px 2px 4px rgba(0,0,0,1); /* เงาดำเพื่อให้ลอยออกจากวิดีโอ */
+        }
 
+        /* ปรับ Social Icons ให้เด่นตลอดเวลา */
         .social-icons {
             display: flex;
-            gap: 30px;
+            gap: 40px;
             margin-top: 10px;
             position: relative;
         }
 
         .icon-link {
-            color: rgba(255,255,255,0.6);
-            font-size: 32px;
+            color: #fff;
+            font-size: 38px;
             text-decoration: none;
             transition: 0.3s;
+            filter: drop-shadow(0 0 5px rgba(255,255,255,0.4));
         }
 
         .icon-link:hover {
             color: #fff;
-            transform: translateY(-5px);
-            filter: drop-shadow(0 0 15px #fff);
+            transform: translateY(-8px) scale(1.2);
+            filter: drop-shadow(0 0 20px #fff);
         }
 
-        /* --- Custom Notification (แทน Alert) --- */
         #copy-toast {
             position: absolute;
-            top: -40px;
+            top: -50px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(255, 255, 255, 0.9);
+            background: #fff;
             color: #000;
-            padding: 5px 15px;
-            font-weight: bold;
-            font-size: 12px;
-            border-radius: 5px;
+            padding: 6px 18px;
+            font-weight: 800;
+            font-size: 14px;
+            border-radius: 4px;
             opacity: 0;
             transition: 0.3s;
             pointer-events: none;
+            box-shadow: 0 0 15px #fff;
         }
 
         /* --- System UI --- */
@@ -158,10 +185,11 @@
 
         #player-ui {
             position: fixed; bottom: 20px; right: 20px; z-index: 101;
-            display: none; background: rgba(0,0,0,0.6); padding: 10px; border-radius: 20px;
+            display: none; background: rgba(0,0,0,0.7); padding: 10px; border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.2);
         }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -216,11 +244,9 @@
         let lastX = 0, lastY = 0;
 
         document.addEventListener('mousemove', (e) => {
-            // เลื่อนดาบแบบ 1:1 ติดเมาส์
             container.style.left = e.clientX + 'px';
             container.style.top = e.clientY + 'px';
 
-            // สร้างหางดาบเฉพาะเมื่อขยับเมาส์เร็วพอ
             const dist = Math.hypot(e.clientX - lastX, e.clientY - lastY);
             if (dist > 15) {
                 createSlash(e.clientX, e.clientY, lastX, lastY);
@@ -240,12 +266,7 @@
             line.style.transform = `rotate(${angle}rad)`;
             document.body.appendChild(line);
             
-            // ค่อยๆ จางหาย
-            line.animate([
-                { opacity: 0.7 },
-                { opacity: 0 }
-            ], { duration: 300, fill: 'forwards' });
-            
+            line.animate([{ opacity: 0.7 }, { opacity: 0 }], { duration: 300, fill: 'forwards' });
             setTimeout(() => line.remove(), 300);
         }
 
@@ -267,11 +288,8 @@
 
         function copyDiscord(id) {
             navigator.clipboard.writeText(id).then(() => {
-                // แสดง Pop-up แทน Alert เพื่อไม่ให้เว็บค้าง
                 toast.style.opacity = '1';
-                setTimeout(() => {
-                    toast.style.opacity = '0';
-                }, 1500);
+                setTimeout(() => { toast.style.opacity = '0'; }, 1500);
             });
         }
 
