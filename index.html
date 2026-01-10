@@ -24,7 +24,6 @@
             overflow: hidden;
         }
 
-        /* เพิ่ม Gradient จางๆ กลางจอเพื่อให้ข้อความเด่น */
         body::after {
             content: "";
             position: fixed;
@@ -50,20 +49,22 @@
             pointer-events: none;
         }
 
-        /* --- Sword Cursor --- */
+        /* --- Sword Cursor (Image Version) --- */
         #sword-container {
             position: fixed;
             left: 0; top: 0;
             pointer-events: none;
             z-index: 10000;
-            transform: translate(-20%, -80%);
+            /* ปรับตำแหน่งเพื่อให้โคนดาบอยู่ใกล้เมาส์ และปลายดาบชี้ออก */
+            transform: translate(-10%, -90%) rotate(-15deg); 
             will-change: left, top;
         }
 
-        #sword-icon {
-            font-size: 50px;
-            display: inline-block;
-            filter: drop-shadow(0 0 15px #fff);
+        #sword-img {
+            width: 100px; /* ปรับขนาดดาบตรงนี้ */
+            height: auto;
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.8));
+            transition: transform 0.1s;
         }
 
         .spin-slash {
@@ -72,7 +73,7 @@
 
         @keyframes fastSpin {
             0% { transform: rotate(0deg) scale(1); }
-            50% { transform: rotate(180deg) scale(1.4); filter: brightness(3) drop-shadow(0 0 30px #fff); }
+            50% { transform: rotate(180deg) scale(1.5); filter: brightness(2) drop-shadow(0 0 30px #fff); }
             100% { transform: rotate(360deg) scale(1); }
         }
 
@@ -118,7 +119,6 @@
 
         @keyframes pulse { from { opacity: 0.5; transform: scale(0.95); } to { opacity: 1; transform: scale(1.05); } }
 
-        /* ปรับชื่อให้เด่นขึ้นมาก */
         .glint-text {
             font-size: 60px; font-weight: 900; letter-spacing: 8px;
             color: #fff;
@@ -128,17 +128,15 @@
             margin-bottom: 5px;
         }
 
-        /* ปรับ Bio ให้ชัดขึ้น */
         .bio { 
             font-size: 18px; 
             color: #eee; 
             margin-bottom: 35px; 
             letter-spacing: 4px;
             font-weight: 300;
-            text-shadow: 2px 2px 4px rgba(0,0,0,1); /* เงาดำเพื่อให้ลอยออกจากวิดีโอ */
+            text-shadow: 2px 2px 4px rgba(0,0,0,1);
         }
 
-        /* ปรับ Social Icons ให้เด่นตลอดเวลา */
         .social-icons {
             display: flex;
             gap: 40px;
@@ -177,7 +175,6 @@
             box-shadow: 0 0 15px #fff;
         }
 
-        /* --- System UI --- */
         #overlay {
             position: fixed; inset: 0; background: #000; z-index: 9999;
             display: flex; align-items: center; justify-content: center;
@@ -195,7 +192,7 @@
 <body>
 
     <div id="sword-container">
-        <div id="sword-icon">🗡️</div>
+        <img src="https://www.pngarts.com/files/4/Katana-Transparent-Image.png" id="sword-img" alt="Sword">
     </div>
 
     <div id="overlay" onclick="startExperience()">
@@ -239,7 +236,7 @@
 
     <script>
         const container = document.getElementById('sword-container');
-        const sword = document.getElementById('sword-icon');
+        const swordImg = document.getElementById('sword-img');
         const toast = document.getElementById('copy-toast');
         let lastX = 0, lastY = 0;
 
@@ -271,8 +268,8 @@
         }
 
         document.addEventListener('mousedown', () => {
-            sword.classList.add('spin-slash');
-            setTimeout(() => sword.classList.remove('spin-slash'), 300);
+            swordImg.classList.add('spin-slash');
+            setTimeout(() => swordImg.classList.remove('spin-slash'), 300);
         });
 
         function startExperience() {
