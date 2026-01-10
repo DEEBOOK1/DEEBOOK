@@ -8,195 +8,164 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
+        /* ล็อกพื้นฐานไม่ให้ของขยับมั่ว */
         * { 
             margin: 0; padding: 0; box-sizing: border-box; 
             font-family: 'Kanit', sans-serif; 
             cursor: none !important; 
         }
 
-        body {
+        body, html {
+            height: 100%; width: 100%;
             background: #000;
-            height: 100vh;
+            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            overflow: hidden;
         }
 
-        /* --- Scanlines Overlay --- */
-        body::before {
-            content: " ";
+        /* --- Scanlines (แก้ให้เป็น Background ไม่เบียด Content) --- */
+        .scanlines {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-            background-size: 100% 3px, 3px 100%;
-            z-index: 50;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%);
+            background-size: 100% 4px;
+            z-index: 100;
             pointer-events: none;
         }
 
-        /* --- Sword Cursor --- */
+        #bg-video {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover; z-index: -2; opacity: 0.6;
+        }
+
+        /* --- คอนเทนเนอร์หลัก (ล็อกตำแหน่งกึ่งกลาง) --- */
+        .main-container {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+        }
+
+        /* --- กรอบโปรไฟล์ RGB --- */
+        .profile-wrapper {
+            position: relative;
+            width: 160px; height: 160px;
+            margin-bottom: 20px;
+        }
+
+        .rgb-border {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(0deg, #00d2ff, #3a7bd5, #ff00c1, #00d2ff);
+            background-size: 100% 400%;
+            animation: moveRGB 3s linear infinite;
+        }
+
+        @keyframes moveRGB {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 0% 100%; }
+        }
+
+        .profile-img {
+            position: absolute;
+            top: 5px; left: 5px;
+            width: calc(100% - 10px);
+            height: calc(100% - 10px);
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #000;
+            z-index: 2;
+        }
+
+        /* --- ข้อความ --- */
+        .glint-text {
+            font-size: 42px;
+            font-weight: 700;
+            letter-spacing: 4px;
+            color: #fff;
+            text-shadow: 0 0 15px rgba(255,255,255,0.5);
+            margin-bottom: 5px;
+        }
+
+        .bio {
+            font-size: 16px; color: rgba(255,255,255,0.8);
+            margin-bottom: 30px; letter-spacing: 2px;
+        }
+
+        /* --- ปุ่มกด --- */
+        .links-group {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .link-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 14px;
+            border-radius: 50px; /* ทรงโค้งมนตามรูป */
+            color: #fff;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: 0.3s;
+            backdrop-filter: blur(5px);
+        }
+
+        .link-card:hover {
+            background: #fff;
+            color: #000;
+            transform: scale(1.05);
+        }
+
+        /* --- ระบบดาบ --- */
         #sword-cursor {
             position: fixed;
             pointer-events: none;
             z-index: 10000;
             font-size: 32px;
-            transform: translate(-10%, -90%) rotate(0deg); 
-            filter: drop-shadow(0 0 10px #fff);
-            transition: font-size 0.2s, transform 0.1s ease-out;
-            user-select: none;
+            transform: translate(-20%, -80%);
+            filter: drop-shadow(0 0 8px #fff);
+            transition: transform 0.1s ease-out;
         }
 
-        .slash {
-            transform: translate(-10%, -90%) rotate(360deg) scale(1.5) !important;
-            transition: 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28) !important;
-        }
-
-        /* --- หางเมาส์แบบรอยฟัน (Sword Trail) --- */
         .trail {
             position: fixed;
-            width: 30px; 
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #fff, transparent);
+            width: 25px; height: 2px;
+            background: #fff;
             pointer-events: none;
             z-index: 9999;
-            opacity: 0.8;
-            animation: trailAnim 0.5s ease-out forwards;
+            animation: trailAnim 0.4s linear forwards;
         }
 
         @keyframes trailAnim {
-            0% { transform: scaleX(0) rotate(var(--r)); opacity: 1; }
-            100% { transform: scaleX(1.5) rotate(var(--r)) translateY(10px); opacity: 0; }
+            from { opacity: 1; transform: scaleX(1) rotate(var(--r)); }
+            to { opacity: 0; transform: scaleX(0) rotate(var(--r)); }
         }
 
         #overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 9999; display: flex;
-            align-items: center; justify-content: center; transition: 1s;
-        }
-
-        #bg-video {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            object-fit: cover; z-index: -1; opacity: 0.5;
-        }
-
-        /* --- กรอบโปรไฟล์ RGB หมุน --- */
-        .profile-container {
-            position: relative;
-            width: 155px;
-            height: 155px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 25px;
-            animation: profilePulse 4s infinite ease-in-out;
-        }
-
-        .profile-border {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: linear-gradient(0deg, transparent, transparent, #fff, #00d2ff, #3a7bd5);
-            animation: rotateBorder 2s linear infinite;
-        }
-
-        .profile-border::before {
-            content: "";
-            position: absolute;
-            inset: 5px;
-            background: #000;
-            border-radius: 50%;
-            z-index: 1;
-        }
-
-        @keyframes rotateBorder {
-            0% { transform: rotate(0deg); filter: hue-rotate(0deg); }
-            100% { transform: rotate(360deg); filter: hue-rotate(360deg); }
-        }
-
-        .profile-img {
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
-            z-index: 2;
-            object-fit: cover;
-            position: relative;
-        }
-
-        @keyframes profilePulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        /* --- Text Styling --- */
-        .glint-text {
-            font-size: 50px;
-            font-weight: 700;
-            letter-spacing: 6px;
-            background: linear-gradient(90deg, #fff, #888, #fff);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: shine 3s linear infinite;
-            filter: drop-shadow(0 0 20px rgba(0,0,0,0.8));
-        }
-
-        @keyframes shine { to { background-position: 200% center; } }
-
-        .bio {
-            font-size: 18px; margin: 10px 0 40px 0;
-            color: #fff; letter-spacing: 2px;
-            text-shadow: 2px 2px 10px #000;
-        }
-
-        /* --- Links --- */
-        .links { display: flex; flex-direction: column; gap: 15px; width: 85%; }
-
-        .link-card {
-            background: rgba(255, 255, 255, 0.08);
-            padding: 16px; border-radius: 12px;
-            text-decoration: none; color: #fff;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            display: flex; align-items: center; justify-content: center;
-            gap: 15px; transition: 0.3s;
-            backdrop-filter: blur(8px);
-        }
-
-        .link-card:hover {
-            background: rgba(255, 255, 255, 1);
-            color: #000;
-            transform: scale(1.05) translateX(10px);
-            box-shadow: 0 0 25px rgba(255,255,255,0.5);
-        }
-
-        .view-section {
-            margin-top: 40px;
-            font-size: 14px;
-            color: rgba(255,255,255,0.5);
-        }
-
-        .audio-player {
-            position: fixed; bottom: 25px; right: 25px;
-            z-index: 100; display: flex; align-items: center; gap: 12px;
-            background: rgba(0,0,0,0.6); padding: 12px; border-radius: 30px;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        #volume-slider { width: 70px; accent-color: #fff; }
-
-        #copy-toast {
-            position: fixed; top: 30px; background: #fff; color: #000;
-            padding: 10px 25px; border-radius: 30px; display: none; z-index: 10001;
+            position: fixed; inset: 0; background: #000;
+            z-index: 9999; display: flex; align-items: center; justify-content: center;
+            transition: 1s; color: #fff;
         }
     </style>
 </head>
 <body>
 
+    <div class="scanlines"></div>
     <div id="sword-cursor">🗡️</div>
-    <div id="copy-toast">คัดลอกไอดีแล้ว!</div>
 
-    <div id="overlay" onclick="startExperience()">
+    <div id="overlay" onclick="startNow()">
         <p>[ CLICK TO ENTER ]</p>
     </div>
 
@@ -204,54 +173,44 @@
         <source src="0110.mp4" type="video/mp4">
     </video>
 
-    <div class="audio-player" id="player-ui" style="display: none;">
-        <i id="mute-btn" class="fas fa-volume-up" onclick="toggleMute()"></i>
-        <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.5">
-    </div>
-
     <audio id="myAudio" loop><source src="11er.mp3" type="audio/mpeg"></audio>
 
-    <div class="content-wrapper" id="main-content" style="display: none;">
-        <div class="profile-container">
-            <div class="profile-border"></div>
-            <img src="FB_IMG_1699721840964.jpg" alt="Profile" class="profile-img">
+    <div class="main-container" id="content" style="display: none;">
+        <div class="profile-wrapper">
+            <div class="rgb-border"></div>
+            <img src="FB_IMG_1699721840964.jpg" class="profile-img">
         </div>
 
         <h1 class="glint-text">DEEBOOK</h1>
         <p class="bio">อ่านทำไม</p>
 
-        <div class="links">
-            <a href="https://www.facebook.com/share/1Ayx2zDfHo/" target="_blank" class="link-card" onmouseover="growSword()" onmouseout="shrinkSword()">
+        <div class="links-group">
+            <a href="https://www.facebook.com/share/1Ayx2zDfHo/" target="_blank" class="link-card">
                 <i class="fab fa-facebook-f"></i> FACEBOOK
             </a>
-            <div onclick="copyDiscord('563742272462651410')" class="link-card" style="cursor: pointer;" onmouseover="growSword()" onmouseout="shrinkSword()">
+            <div onclick="copyDiscord('563742272462651410')" class="link-card" style="cursor: pointer;">
                 <i class="fab fa-discord"></i> DISCORD
             </div>
-            <a href="https://steamcommunity.com/profiles/76561199128294970/" target="_blank" class="link-card" onmouseover="growSword()" onmouseout="shrinkSword()">
+            <a href="https://steamcommunity.com/profiles/76561199128294970/" target="_blank" class="link-card">
                 <i class="fab fa-steam"></i> STEAM
             </a>
         </div>
 
-        <div class="view-section">
-            <i class="far fa-eye"></i> Views: <span id="view-count">...</span>
+        <div style="margin-top: 20px; font-size: 12px; color: gray;">
+            Views: <span id="view-count">1,254</span>
         </div>
     </div>
 
     <script>
         const sword = document.getElementById('sword-cursor');
-        const audio = document.getElementById("myAudio");
-        const video = document.getElementById("bg-video");
-        const overlay = document.getElementById("overlay");
-        const content = document.getElementById("main-content");
-        const viewDisplay = document.getElementById("view-count");
-
-        // --- ระบบหางเมาส์แบบรอยฟันดาบ ---
+        const content = document.getElementById('content');
+        
+        // ตามเมาส์
         let lastX = 0;
         document.addEventListener('mousemove', (e) => {
             sword.style.left = e.clientX + 'px';
             sword.style.top = e.clientY + 'px';
 
-            // คำนวณทิศทางเพื่อเอียงรอยฟันดาบ
             let angle = Math.atan2(e.clientY - lastX, e.clientX - lastX) * (180 / Math.PI);
             lastX = e.clientX;
 
@@ -261,57 +220,24 @@
             trail.style.top = e.clientY + 'px';
             trail.style.setProperty('--r', angle + 'deg');
             document.body.appendChild(trail);
-            setTimeout(() => { trail.remove(); }, 500);
+            setTimeout(() => trail.remove(), 400);
         });
 
-        document.addEventListener('mousedown', () => {
-            sword.classList.add('slash');
-        });
-        document.addEventListener('mouseup', () => {
-            setTimeout(() => { sword.classList.remove('slash'); }, 150);
-        });
-
-        function growSword() { sword.style.fontSize = '45px'; }
-        function shrinkSword() { sword.style.fontSize = '32px'; }
-
-        async function updateViews() {
-            const namespace = "deebook_unique_vfinal"; 
-            const key = "visits";
-            try {
-                const hasVisited = localStorage.getItem('v_db_final');
-                let url = `https://api.countapi.xyz/get/${namespace}/${key}`;
-                if (!hasVisited) {
-                    url = `https://api.countapi.xyz/hit/${namespace}/${key}`;
-                    localStorage.setItem('v_db_final', 'true');
-                }
-                const res = await fetch(url);
-                const data = await res.json();
-                viewDisplay.innerText = ((data.value || 0) + 1250).toLocaleString();
-            } catch (e) {
-                viewDisplay.innerText = "1,254";
-            }
-        }
-
-        function startExperience() {
-            overlay.style.opacity = "0";
-            setTimeout(() => { 
-                overlay.style.display = "none"; 
-                content.style.display = "flex"; 
-                document.getElementById("player-ui").style.display = "flex";
-                updateViews();
+        function startNow() {
+            document.getElementById('overlay').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('overlay').style.display = 'none';
+                content.style.display = 'flex';
             }, 1000);
-            video.muted = false; video.play(); audio.play();
+            document.getElementById('myAudio').play();
+            document.getElementById('bg-video').muted = false;
+            document.getElementById('bg-video').play();
         }
 
         function copyDiscord(id) {
             navigator.clipboard.writeText(id);
-            const toast = document.getElementById('copy-toast');
-            toast.style.display = 'block';
-            setTimeout(() => { toast.style.display = 'none'; }, 2000);
+            alert("คัดลอก Discord ID แล้ว!");
         }
-
-        function toggleMute() { audio.muted = !audio.muted; }
-        document.getElementById("volume-slider").addEventListener("input", (e) => { audio.volume = e.target.value; });
     </script>
 </body>
 </html>
