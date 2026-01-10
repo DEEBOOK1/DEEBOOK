@@ -24,42 +24,43 @@
             overflow: hidden;
         }
 
-        /* --- Sword Cursor (New Real Image) --- */
+        /* --- Sword Cursor (Pointy Tip Version) --- */
         #sword-container {
             position: fixed;
             left: 0; top: 0;
             pointer-events: none;
             z-index: 10000;
             will-change: left, top;
-            /* ปรับตำแหน่งเมาส์ให้อยู่ที่ปลายดาบ */
-            transform: translate(-90%, -10%) rotate(15deg); 
+            /* ย้ายตำแหน่งให้ปลายดาบ (ด้านบนซ้ายของรูป) อยู่ที่ตำแหน่งเมาส์ */
+            transform: translate(-5px, -5px) rotate(0deg);
         }
 
         #sword-img {
-            width: 150px; /* ขนาดดาบใหญ่สะใจ */
+            width: 110px; /* ขนาดกำลังดี ไม่ใหญ่เกินไป */
             height: auto;
-            filter: drop-shadow(0 0 15px rgba(255,255,255,0.8));
-            transition: transform 0.1s;
+            /* ปรับให้รูปเอียง 45 องศาเพื่อให้ปลายดาบชี้ไปที่เมาส์พอดี */
+            transform: rotate(-135deg); 
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.7));
         }
 
         .spin-slash {
-            animation: slashAnim 0.2s ease-out forwards;
+            animation: tipPoke 0.2s ease-out forwards;
         }
 
-        @keyframes slashAnim {
-            0% { transform: rotate(0deg) scale(1); }
-            50% { transform: rotate(-45deg) scale(1.4); filter: brightness(2) drop-shadow(0 0 30px #fff); }
-            100% { transform: rotate(0deg) scale(1); }
+        /* ท่าจิ้มด้วยปลายดาบเมื่อกดคลิก */
+        @keyframes tipPoke {
+            0% { transform: rotate(-135deg) scale(1); }
+            50% { transform: rotate(-135deg) scale(1.2) translate(10px, -10px); filter: brightness(2); }
+            100% { transform: rotate(-135deg) scale(1); }
         }
 
-        /* เอฟเฟกต์หางดาบ (ทำให้หนาขึ้น) */
         .slash-line {
             position: fixed;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, #fff);
+            height: 2px;
+            background: #fff;
             pointer-events: none;
             z-index: 9999;
-            box-shadow: 0 0 12px #fff;
+            box-shadow: 0 0 8px #fff;
             transform-origin: left center;
         }
 
@@ -125,7 +126,7 @@
 <body>
 
     <div id="sword-container">
-        <img src="https://www.pngplay.com/wp-content/uploads/12/Katana-No-Background-Clip-Art.png" id="sword-img" alt="Katana">
+        <img src="https://www.pngmart.com/files/1/Katana-Transparent-Background.png" id="sword-img" alt="Katana Blade">
     </div>
 
     <div id="overlay" onclick="startExperience()">
@@ -164,8 +165,10 @@
         let lastX = 0, lastY = 0;
 
         document.addEventListener('mousemove', (e) => {
+            // เลื่อนตำแหน่ง container ไปตามเมาส์
             container.style.left = e.clientX + 'px';
             container.style.top = e.clientY + 'px';
+
             const dist = Math.hypot(e.clientX - lastX, e.clientY - lastY);
             if (dist > 15) {
                 createSlash(e.clientX, e.clientY, lastX, lastY);
@@ -184,8 +187,8 @@
             const angle = Math.atan2(y1 - y2, x1 - x2);
             line.style.transform = `rotate(${angle}rad)`;
             document.body.appendChild(line);
-            line.animate([{ opacity: 0.8 }, { opacity: 0 }], { duration: 400, fill: 'forwards' });
-            setTimeout(() => line.remove(), 400);
+            line.animate([{ opacity: 0.7 }, { opacity: 0 }], { duration: 300, fill: 'forwards' });
+            setTimeout(() => line.remove(), 300);
         }
 
         document.addEventListener('mousedown', () => {
