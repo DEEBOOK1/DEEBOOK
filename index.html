@@ -1,314 +1,45 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DEEBOOK Profile | Official</title>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
-    <style>
-        * { 
-            margin: 0; padding: 0; box-sizing: border-box; 
-            font-family: 'Kanit', sans-serif; 
-            cursor: none !important; 
-        }
+<div id="three-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10000;"></div>
 
-        body {
-            background: #000;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            overflow: hidden;
-            /* สำหรับ Screen Shake */
-            transition: transform 0.1s;
-        }
+<script type="module">
+    import * as THREE from 'https://cdn.skypack.dev/three@0.132.2';
 
-        /* --- Sword Cursor --- */
-        #sword-container {
-            position: fixed;
-            left: 0; top: 0;
-            pointer-events: none;
-            z-index: 10000;
-            will-change: left, top;
-            transform: translate(-5px, -5px); 
-        }
+    // 1. สร้างสตูดิโอ (Scene)
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.getElementById('three-container').appendChild(renderer.domElement);
 
-        #sword-img {
-            width: 45px; 
-            height: auto;
-            transform: rotate(-5deg); 
-            filter: drop-shadow(0 0 8px rgba(255,255,255,0.8));
-            display: block;
-        }
+    // 2. สร้าง "ตัวดาบ" (Geometry & Material)
+    const geometry = new THREE.CapsuleGeometry(0.05, 1, 4, 8); // ทรงกระบอกยาวๆ
+    const material = new THREE.MeshStandardMaterial({ 
+        color: 0xffffff, 
+        emissive: 0xffffff, 
+        emissiveIntensity: 2 
+    });
+    const sword3D = new THREE.Mesh(geometry, material);
+    scene.add(sword3D);
 
-        /* Aura วิ่งตามดาบ */
-        #cursor-aura {
-            position: fixed;
-            width: 150px;
-            height: 150px;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9997;
-            transform: translate(-50%, -50%);
-            transition: width 0.3s, height 0.3s;
-        }
+    // 3. เพิ่มแสงสว่าง (Light)
+    const light = new THREE.PointLight(0xff0000, 2, 10);
+    scene.add(light);
+    camera.position.z = 5;
 
-        .click-anim {
-            animation: poke 0.1s ease-out;
-        }
-
-        @keyframes poke {
-            0% { transform: rotate(-5deg) scale(1); }
-            50% { transform: rotate(-5deg) scale(1.4) translate(5px, -5px); }
-            100% { transform: rotate(-5deg) scale(1); }
-        }
-
-        .fire-particle {
-            position: fixed;
-            width: 6px;
-            height: 6px;
-            background: #ff4500;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9998;
-            box-shadow: 0 0 10px #ffae00, 0 0 20px #ff4500;
-        }
-
-        .slash-line {
-            position: fixed;
-            height: 2px;
-            background: #fff;
-            pointer-events: none;
-            z-index: 9999;
-            box-shadow: 0 0 5px #fff;
-            transform-origin: left center;
-        }
-
-        /* --- UI & Glitch Effect --- */
-        #bg-video {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            object-fit: cover; z-index: -1; opacity: 0.5;
-        }
-
-        .content-wrapper {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            z-index: 10;
-            text-align: center;
-        }
-
-        .glint-text {
-            font-size: 60px; font-weight: 900; letter-spacing: 8px;
-            text-shadow: 0 0 15px rgba(255,255,255,0.8);
-            margin-bottom: 5px;
-            position: relative;
-        }
-
-        /* Glitch Animation */
-        .glint-text:hover {
-            animation: glitch 0.3s cubic-bezier(.25,.46,.45,.94) both infinite;
-        }
-
-        @keyframes glitch {
-            0% { transform: translate(0); }
-            20% { transform: translate(-3px, 3px); }
-            40% { transform: translate(-3px, -3px); }
-            60% { transform: translate(3px, 3px); }
-            80% { transform: translate(3px, -3px); }
-            100% { transform: translate(0); }
-        }
-
-        .profile-box {
-            position: relative; width: 160px; height: 160px; margin-bottom: 25px;
-        }
-
-        .aura {
-            position: absolute; width: 100%; height: 100%; border-radius: 50%;
-            border: 2px solid #fff; box-shadow: 0 0 25px #fff;
-            animation: pulse 1.5s infinite alternate;
-        }
-
-        .profile-img {
-            position: absolute; top: 10px; left: 10px; width: 140px; height: 140px;
-            border-radius: 50%; object-fit: cover; border: 4px solid #000;
-        }
-
-        .social-icons { display: flex; gap: 40px; margin-top: 20px; position: relative; }
-        .icon-link { color: #fff; font-size: 38px; transition: 0.3s; text-decoration: none; }
-        .icon-link:hover { transform: translateY(-8px) scale(1.2); }
-
-        #copy-toast {
-            position: absolute; top: -40px; left: 50%; transform: translateX(-50%);
-            background: #fff; color: #000; padding: 5px 15px; border-radius: 5px;
-            font-weight: bold; font-size: 14px; opacity: 0; transition: 0.3s; pointer-events: none;
-        }
-
-        #player-ui {
-            position: fixed; bottom: 20px; right: 20px; z-index: 101;
-            display: none; background: rgba(0,0,0,0.7); padding: 12px; border-radius: 30px;
-            border: 1px solid rgba(255,255,255,0.2); align-items: center; gap: 10px;
-        }
-
-        #overlay { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; align-items: center; justify-content: center; }
+    // 4. ทำให้ดาบวิ่งตามเมาส์
+    document.addEventListener('mousemove', (e) => {
+        // แปลงค่าพิกัดเมาส์ให้เป็นพิกัด 3D
+        const x = (e.clientX / window.innerWidth) * 2 - 1;
+        const y = -(e.clientY / window.innerHeight) * 2 + 1;
         
-        @keyframes pulse { from { opacity: 0.4; transform: scale(0.95); } to { opacity: 1; transform: scale(1.05); } }
-        
-        /* สั่นหน้าจอ */
-        .shake { animation: shake-kb 0.1s ease-in-out; }
-        @keyframes shake-kb {
-            0% { transform: translate(0,0); }
-            25% { transform: translate(5px, 5px); }
-            50% { transform: translate(-5px, -5px); }
-            75% { transform: translate(5px, -5px); }
-            100% { transform: translate(0,0); }
-        }
-    </style>
-</head>
-<body>
+        sword3D.position.set(x * 5, y * 3.5, 0); // ปรับเลขคูณตามความเหมาะสม
+        sword3D.rotation.z = -Math.PI / 4; // เอียงดาบ
+        light.position.set(x * 5, y * 3.5, 1);
+    });
 
-    <div id="cursor-aura"></div>
-
-    <div id="sword-container">
-        <img src="sword.png" id="sword-img" alt="Sword">
-    </div>
-
-    <div id="overlay" onclick="startExperience()">
-        <p>[ CLICK TO START ]</p>
-    </div>
-
-    <video id="bg-video" loop playsinline muted>
-        <source src="0110.mp4" type="video/mp4">
-    </video>
-
-    <audio id="myAudio" loop><source src="11er.mp3" type="audio/mpeg"></audio>
-
-    <div id="player-ui">
-        <i class="fas fa-volume-up" id="mute-icon"></i>
-        <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.5" style="accent-color: #fff; width: 80px;">
-    </div>
-
-    <div class="content-wrapper" id="main-content">
-        <div class="profile-box">
-            <div class="aura"></div>
-            <img src="FB_IMG_1699721840964.jpg" alt="Profile" class="profile-img">
-        </div>
-        <h1 class="glint-text">DEEBOOK</h1>
-        <p style="font-size: 18px; color: #eee; letter-spacing: 4px;">อ่านทำไม</p>
-        
-        <div class="social-icons">
-            <div id="copy-toast">COPIED!</div>
-            <a href="https://www.facebook.com/share/1Ayx2zDfHo/" target="_blank" class="icon-link"><i class="fab fa-facebook-f"></i></a>
-            <div onclick="copyDiscord('563742272462651410')" class="icon-link" style="cursor: pointer;"><i class="fab fa-discord"></i></div>
-            <a href="https://steamcommunity.com/profiles/76561199128294970/" target="_blank" class="icon-link"><i class="fab fa-steam"></i></a>
-        </div>
-    </div>
-
-    <script>
-        const container = document.getElementById('sword-container');
-        const swordImg = document.getElementById('sword-img');
-        const aura = document.getElementById('cursor-aura');
-        const audio = document.getElementById("myAudio");
-        const muteIcon = document.getElementById("mute-icon");
-        const toast = document.getElementById("copy-toast");
-        let lastX = 0, lastY = 0;
-
-        document.addEventListener('mousemove', (e) => {
-            // ดาบวิ่งตามเมาส์
-            container.style.left = e.clientX + 'px';
-            container.style.top = e.clientY + 'px';
-            
-            // Aura วิ่งตามเมาส์
-            aura.style.left = e.clientX + 'px';
-            aura.style.top = e.clientY + 'px';
-
-            const dist = Math.hypot(e.clientX - lastX, e.clientY - lastY);
-            if (dist > 15) {
-                createSlash(e.clientX, e.clientY, lastX, lastY);
-                lastX = e.clientX;
-                lastY = e.clientY;
-            }
-        });
-
-        function createSlash(x1, y1, x2, y2) {
-            const line = document.createElement('div');
-            line.className = 'slash-line';
-            const dist = Math.hypot(x1 - x2, y1 - y2);
-            line.style.width = dist + 'px';
-            line.style.left = x2 + 'px';
-            line.style.top = y2 + 'px';
-            const angle = Math.atan2(y1 - y2, x1 - x2);
-            line.style.transform = `rotate(${angle}rad)`;
-            document.body.appendChild(line);
-            line.animate([{ opacity: 0.5 }, { opacity: 0 }], { duration: 300, fill: 'forwards' });
-            setTimeout(() => line.remove(), 300);
-        }
-
-        function createFire(x, y) {
-            for (let i = 0; i < 12; i++) {
-                const p = document.createElement('div');
-                p.className = 'fire-particle';
-                p.style.left = x + 'px';
-                p.style.top = y + 'px';
-                document.body.appendChild(p);
-
-                const angle = Math.random() * Math.PI * 2;
-                const velocity = Math.random() * 80 + 30;
-                const tx = Math.cos(angle) * velocity;
-                const ty = Math.sin(angle) * velocity;
-
-                p.animate([
-                    { transform: 'translate(0, 0) scale(1)', opacity: 1 },
-                    { transform: `translate(${tx}px, ${ty}px) scale(0)`, opacity: 0 }
-                ], { duration: 600, easing: 'ease-out' });
-
-                setTimeout(() => p.remove(), 600);
-            }
-        }
-
-        document.addEventListener('mousedown', (e) => {
-            if(swordImg) {
-                swordImg.classList.add('click-anim');
-                createFire(e.clientX, e.clientY);
-                
-                // สั่นหน้าจอ
-                document.body.classList.add('shake');
-                setTimeout(() => document.body.classList.remove('shake'), 100);
-                
-                setTimeout(() => swordImg.classList.remove('click-anim'), 100);
-            }
-        });
-
-        function startExperience() {
-            document.getElementById("overlay").style.display = "none";
-            document.getElementById("main-content").style.display = "flex";
-            document.getElementById("player-ui").style.display = "flex";
-            document.getElementById("bg-video").muted = false;
-            document.getElementById("bg-video").play();
-            audio.play();
-        }
-
-        muteIcon.onclick = () => {
-            audio.muted = !audio.muted;
-            muteIcon.className = audio.muted ? "fas fa-volume-mute" : "fas fa-volume-up";
-        };
-
-        document.getElementById("volume-slider").oninput = (e) => {
-            audio.volume = e.target.value;
-            audio.muted = e.target.value == 0;
-            muteIcon.className = audio.muted ? "fas fa-volume-mute" : "fas fa-volume-up";
-        };
-
-        function copyDiscord(id) {
-            navigator.clipboard.writeText(id).then(() => {
-                toast.style.opacity = "1";
-                setTimeout(() => { toast.style.opacity = "0"; }, 1500);
-            });
-        }
-    </script>
-</body>
-</html>
+    // 5. Render วนไป
+    function animate() {
+        requestAnimationFrame(animate);
+        renderer.render(scene, camera);
+    }
+    animate();
+</script>
