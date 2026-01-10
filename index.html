@@ -1,45 +1,139 @@
-<div id="three-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10000;"></div>
-
-<script type="module">
-    import * as THREE from 'https://cdn.skypack.dev/three@0.132.2';
-
-    // 1. สร้างสตูดิโอ (Scene)
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.getElementById('three-container').appendChild(renderer.domElement);
-
-    // 2. สร้าง "ตัวดาบ" (Geometry & Material)
-    const geometry = new THREE.CapsuleGeometry(0.05, 1, 4, 8); // ทรงกระบอกยาวๆ
-    const material = new THREE.MeshStandardMaterial({ 
-        color: 0xffffff, 
-        emissive: 0xffffff, 
-        emissiveIntensity: 2 
-    });
-    const sword3D = new THREE.Mesh(geometry, material);
-    scene.add(sword3D);
-
-    // 3. เพิ่มแสงสว่าง (Light)
-    const light = new THREE.PointLight(0xff0000, 2, 10);
-    scene.add(light);
-    camera.position.z = 5;
-
-    // 4. ทำให้ดาบวิ่งตามเมาส์
-    document.addEventListener('mousemove', (e) => {
-        // แปลงค่าพิกัดเมาส์ให้เป็นพิกัด 3D
-        const x = (e.clientX / window.innerWidth) * 2 - 1;
-        const y = -(e.clientY / window.innerHeight) * 2 + 1;
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>DEEBOOK | Ultra Edition</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body { margin: 0; overflow: hidden; background: #000; cursor: none; font-family: 'Kanit', sans-serif; }
+        canvas { display: block; position: fixed; top: 0; left: 0; z-index: 1; pointer-events: none; }
         
-        sword3D.position.set(x * 5, y * 3.5, 0); // ปรับเลขคูณตามความเหมาะสม
-        sword3D.rotation.z = -Math.PI / 4; // เอียงดาบ
-        light.position.set(x * 5, y * 3.5, 1);
-    });
+        /* UI Content */
+        #ui-layer {
+            position: relative; z-index: 10; height: 100vh;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: white; pointer-events: none;
+        }
+        .profile-img {
+            width: 150px; height: 150px; border-radius: 50%;
+            border: 4px solid #fff; box-shadow: 0 0 20px #fff;
+            pointer-events: auto;
+        }
+        h1 { font-size: 4rem; letter-spacing: 10px; text-shadow: 0 0 20px rgba(255,255,255,0.5); }
+        #overlay {
+            position: fixed; inset: 0; background: #000; z-index: 100;
+            display: flex; align-items: center; justify-content: center; color: white;
+        }
+    </style>
+</head>
+<body>
 
-    // 5. Render วนไป
-    function animate() {
-        requestAnimationFrame(animate);
-        renderer.render(scene, camera);
-    }
-    animate();
-</script>
+    <div id="overlay" onclick="start()">[ CLICK TO ACTIVATE SWORD ]</div>
+
+    <div id="ui-layer">
+        <img src="FB_IMG_1699721840964.jpg" class="profile-img" alt="Profile">
+        <h1>DEEBOOK</h1>
+        <p>THE ULTIMATE INTERACTIVE EXPERIENCE</p>
+    </div>
+
+    <script>
+        let slashes = [];
+        let particles = [];
+        let canDraw = false;
+
+        function start() {
+            document.getElementById('overlay').style.display = 'none';
+            canDraw = true;
+            // สั่งเล่นเพลง/วิดีโอตรงนี้ได้เลย
+        }
+
+        function setup() {
+            createCanvas(windowWidth, windowHeight);
+        }
+
+        function windowResized() {
+            resizeCanvas(windowWidth, windowHeight);
+        }
+
+        function draw() {
+            if (!canDraw) return;
+            clear();
+
+            // 1. วาดรอยฟัน (Slashes)
+            for (let i = slashes.length - 1; i >= 0; i--) {
+                let s = slashes[i];
+                stroke(255, s.alpha);
+                strokeWeight(s.weight);
+                line(s.x1, s.y1, s.x2, s.y2);
+                s.alpha -= 10; // ค่อยๆ จางหาย
+                s.weight *= 0.9;
+                if (s.alpha <= 0) slashes.splice(i, 1);
+            }
+
+            // 2. วาดเอฟเฟกต์ไฟ (Particles)
+            for (let i = particles.length - 1; i >= 0; i--) {
+                let p = particles[i];
+                noStroke();
+                fill(p.color, p.alpha);
+                circle(p.x, p.y, p.size);
+                p.x += p.vx;
+                p.y += p.vy;
+                p.alpha -= 5;
+                if (p.alpha <= 0) particles.splice(i, 1);
+            }
+
+            // 3. วาดตัวดาบ (Sword Follower)
+            drawSword(mouseX, mouseY);
+        }
+
+        function drawSword(x, y) {
+            push();
+            translate(x, y);
+            rotate(radians(-5)); // องศาที่คุณตั้งไว้
+            
+            // แสง Aura รอบดาบ
+            noStroke();
+            for(let i=10; i>0; i--) {
+                fill(255, 255, 255, 10 - i);
+                ellipse(0, 0, i * 10, i * 2);
+            }
+
+            // ตัวดาบ (สมมติว่าเป็นดาบเลเซอร์)
+            stroke(255);
+            strokeWeight(4);
+            line(0, 0, -50, 50); 
+            pop();
+        }
+
+        function mouseMoved() {
+            if (!canDraw) return;
+            // สร้างรอยฟันเวลาเลื่อนเม้าส์เร็วๆ
+            if (dist(mouseX, mouseY, pmouseX, pmouseY) > 10) {
+                slashes.push({
+                    x1: mouseX, y1: mouseY,
+                    x2: pmouseX, y2: pmouseY,
+                    alpha: 255,
+                    weight: 5
+                });
+            }
+        }
+
+        function mousePressed() {
+            if (!canDraw) return;
+            // เอฟเฟกต์ระเบิดไฟเวลาคลิก
+            for (let i = 0; i < 20; i++) {
+                particles.push({
+                    x: mouseX,
+                    y: mouseY,
+                    vx: random(-5, 5),
+                    vy: random(-5, 5),
+                    size: random(5, 15),
+                    color: color(255, random(100, 200), 0),
+                    alpha: 255
+                });
+            }
+        }
+    </script>
+</body>
+</html>
