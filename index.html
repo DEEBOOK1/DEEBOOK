@@ -49,22 +49,20 @@
             pointer-events: none;
         }
 
-        /* --- Sword Cursor (Image Version) --- */
+        /* --- Sword Cursor --- */
         #sword-container {
             position: fixed;
             left: 0; top: 0;
             pointer-events: none;
             z-index: 10000;
-            /* ปรับตำแหน่งเพื่อให้โคนดาบอยู่ใกล้เมาส์ และปลายดาบชี้ออก */
             transform: translate(-10%, -90%) rotate(-15deg); 
             will-change: left, top;
         }
 
         #sword-img {
-            width: 100px; /* ปรับขนาดดาบตรงนี้ */
+            width: 120px; /* เพิ่มขนาดให้เห็นชัดขึ้น */
             height: auto;
-            filter: drop-shadow(0 0 10px rgba(255,255,255,0.8));
-            transition: transform 0.1s;
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.9));
         }
 
         .spin-slash {
@@ -85,7 +83,6 @@
             z-index: 9999;
             box-shadow: 0 0 8px #fff;
             transform-origin: left center;
-            opacity: 0.7;
         }
 
         /* --- Content UI --- */
@@ -107,7 +104,7 @@
         .aura {
             position: absolute; width: 100%; height: 100%;
             border-radius: 50%; border: 2.5px solid #fff;
-            box-shadow: 0 0 30px rgba(255,255,255,0.8), inset 0 0 20px rgba(255,255,255,0.4); 
+            box-shadow: 0 0 30px rgba(255,255,255,0.8); 
             animation: pulse 1.5s infinite alternate;
         }
 
@@ -122,69 +119,40 @@
         .glint-text {
             font-size: 60px; font-weight: 900; letter-spacing: 8px;
             color: #fff;
-            text-shadow: 0 0 10px rgba(255,255,255,0.8), 
-                         0 0 20px rgba(255,255,255,0.5),
-                         0 0 40px rgba(255,255,255,0.3);
+            text-shadow: 0 0 10px rgba(255,255,255,0.8), 0 0 40px rgba(255,255,255,0.3);
             margin-bottom: 5px;
         }
 
         .bio { 
-            font-size: 18px; 
-            color: #eee; 
-            margin-bottom: 35px; 
-            letter-spacing: 4px;
-            font-weight: 300;
+            font-size: 18px; color: #eee; margin-bottom: 35px; letter-spacing: 4px;
             text-shadow: 2px 2px 4px rgba(0,0,0,1);
         }
 
-        .social-icons {
-            display: flex;
-            gap: 40px;
-            margin-top: 10px;
-            position: relative;
-        }
+        .social-icons { display: flex; gap: 40px; position: relative; }
 
         .icon-link {
-            color: #fff;
-            font-size: 38px;
-            text-decoration: none;
-            transition: 0.3s;
+            color: #fff; font-size: 38px; text-decoration: none; transition: 0.3s;
             filter: drop-shadow(0 0 5px rgba(255,255,255,0.4));
         }
 
-        .icon-link:hover {
-            color: #fff;
-            transform: translateY(-8px) scale(1.2);
-            filter: drop-shadow(0 0 20px #fff);
-        }
+        .icon-link:hover { transform: translateY(-8px) scale(1.2); filter: drop-shadow(0 0 20px #fff); }
 
         #copy-toast {
-            position: absolute;
-            top: -50px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #fff;
-            color: #000;
-            padding: 6px 18px;
-            font-weight: 800;
-            font-size: 14px;
-            border-radius: 4px;
-            opacity: 0;
-            transition: 0.3s;
-            pointer-events: none;
-            box-shadow: 0 0 15px #fff;
+            position: absolute; top: -50px; left: 50%; transform: translateX(-50%);
+            background: #fff; color: #000; padding: 6px 18px; font-weight: 800;
+            border-radius: 4px; opacity: 0; transition: 0.3s; pointer-events: none;
         }
 
-        #overlay {
-            position: fixed; inset: 0; background: #000; z-index: 9999;
-            display: flex; align-items: center; justify-content: center;
-        }
-
+        /* --- Improved Volume UI --- */
         #player-ui {
             position: fixed; bottom: 20px; right: 20px; z-index: 101;
-            display: none; background: rgba(0,0,0,0.7); padding: 10px; border-radius: 20px;
+            display: none; background: rgba(0,0,0,0.7); padding: 12px; border-radius: 30px;
             border: 1px solid rgba(255,255,255,0.2);
+            align-items: center; gap: 10px;
         }
+
+        #mute-btn { cursor: pointer; transition: 0.2s; font-size: 18px; }
+        #mute-btn:hover { transform: scale(1.2); color: #fff; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -192,7 +160,7 @@
 <body>
 
     <div id="sword-container">
-        <img src="https://www.pngarts.com/files/4/Katana-Transparent-Image.png" id="sword-img" alt="Sword">
+        <img src="https://img5.pic.in.th/file/secure-sv1/katana-white.png" id="sword-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3591/3591460.png'" alt="Sword">
     </div>
 
     <div id="overlay" onclick="startExperience()">
@@ -205,9 +173,9 @@
 
     <audio id="myAudio" loop><source src="11er.mp3" type="audio/mpeg"></audio>
 
-    <div id="player-ui">
-        <i class="fas fa-volume-up"></i>
-        <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.5" style="accent-color: #fff; width: 60px;">
+    <div id="player-ui" style="display: none;">
+        <i class="fas fa-volume-up" id="mute-btn" onclick="toggleMute()"></i>
+        <input type="range" id="volume-slider" min="0" max="1" step="0.05" value="0.5" style="accent-color: #fff; width: 80px; cursor: pointer;">
     </div>
 
     <div class="content-wrapper" id="main-content">
@@ -221,29 +189,25 @@
 
         <div class="social-icons">
             <div id="copy-toast">COPIED!</div>
-            
-            <a href="https://www.facebook.com/share/1Ayx2zDfHo/" target="_blank" class="icon-link">
-                <i class="fab fa-facebook-f"></i>
-            </a>
-            <div onclick="copyDiscord('563742272462651410')" class="icon-link" style="cursor: pointer;">
-                <i class="fab fa-discord"></i>
-            </div>
-            <a href="https://steamcommunity.com/profiles/76561199128294970/" target="_blank" class="icon-link">
-                <i class="fab fa-steam"></i>
-            </a>
+            <a href="https://www.facebook.com/share/1Ayx2zDfHo/" target="_blank" class="icon-link"><i class="fab fa-facebook-f"></i></a>
+            <div onclick="copyDiscord('563742272462651410')" class="icon-link" style="cursor: pointer;"><i class="fab fa-discord"></i></div>
+            <a href="https://steamcommunity.com/profiles/76561199128294970/" target="_blank" class="icon-link"><i class="fab fa-steam"></i></a>
         </div>
     </div>
 
     <script>
         const container = document.getElementById('sword-container');
         const swordImg = document.getElementById('sword-img');
+        const audio = document.getElementById("myAudio");
+        const video = document.getElementById("bg-video");
+        const muteBtn = document.getElementById("mute-btn");
+        const volumeSlider = document.getElementById("volume-slider");
         const toast = document.getElementById('copy-toast');
         let lastX = 0, lastY = 0;
 
         document.addEventListener('mousemove', (e) => {
             container.style.left = e.clientX + 'px';
             container.style.top = e.clientY + 'px';
-
             const dist = Math.hypot(e.clientX - lastX, e.clientY - lastY);
             if (dist > 15) {
                 createSlash(e.clientX, e.clientY, lastX, lastY);
@@ -262,7 +226,6 @@
             const angle = Math.atan2(y1 - y2, x1 - x2);
             line.style.transform = `rotate(${angle}rad)`;
             document.body.appendChild(line);
-            
             line.animate([{ opacity: 0.7 }, { opacity: 0 }], { duration: 300, fill: 'forwards' });
             setTimeout(() => line.remove(), 300);
         }
@@ -275,13 +238,29 @@
         function startExperience() {
             document.getElementById("overlay").style.display = "none";
             document.getElementById("main-content").style.display = "flex";
-            document.getElementById("player-ui").style.display = "block";
-            const video = document.getElementById("bg-video");
-            const audio = document.getElementById("myAudio");
+            document.getElementById("player-ui").style.display = "flex";
             video.muted = false;
             video.play();
+            audio.volume = 0.5;
             audio.play();
         }
+
+        // ระบบเปิด/ปิดเสียง (Mute)
+        function toggleMute() {
+            if (audio.muted) {
+                audio.muted = false;
+                muteBtn.className = "fas fa-volume-up";
+            } else {
+                audio.muted = true;
+                muteBtn.className = "fas fa-volume-mute";
+            }
+        }
+
+        volumeSlider.addEventListener("input", (e) => {
+            audio.volume = e.target.value;
+            audio.muted = (e.target.value == 0);
+            muteBtn.className = audio.muted ? "fas fa-volume-mute" : "fas fa-volume-up";
+        });
 
         function copyDiscord(id) {
             navigator.clipboard.writeText(id).then(() => {
@@ -289,10 +268,6 @@
                 setTimeout(() => { toast.style.opacity = '0'; }, 1500);
             });
         }
-
-        document.getElementById("volume-slider").addEventListener("input", (e) => {
-            document.getElementById("myAudio").volume = e.target.value;
-        });
     </script>
 </body>
 </html>
