@@ -24,7 +24,7 @@
             overflow: hidden;
         }
 
-        /* --- Scanlines --- */
+        /* --- Scanlines (Overlay) --- */
         body::before {
             content: " ";
             position: fixed;
@@ -35,7 +35,7 @@
             pointer-events: none;
         }
 
-        /* --- Smooth Sword Cursor --- */
+        /* --- Improved Sword Cursor --- */
         #sword-cursor {
             position: fixed;
             left: 0; top: 0;
@@ -44,7 +44,7 @@
             font-size: 35px;
             transform: translate(-20%, -80%);
             filter: drop-shadow(0 0 10px #fff);
-            will-change: transform;
+            will-change: transform; 
             user-select: none;
         }
 
@@ -80,14 +80,14 @@
             align-items: center;
             z-index: 10;
             width: 100%;
-            max-width: 400px;
+            max-width: 450px;
             animation: fadeIn 1s ease-out;
         }
 
         .profile-box {
             position: relative;
-            width: 150px; height: 150px;
-            margin-bottom: 25px;
+            width: 160px; height: 160px;
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -102,8 +102,16 @@
             animation: pulseAura 2s infinite alternate;
         }
 
+        .spinning-ring {
+            position: absolute;
+            width: 115%; height: 115%;
+            border-radius: 50%;
+            border: 1px dashed rgba(255,255,255,0.5);
+            animation: spinRing 10s linear infinite;
+        }
+
         .profile-img {
-            width: 130px; height: 130px;
+            width: 140px; height: 140px;
             border-radius: 50%;
             object-fit: cover;
             z-index: 5;
@@ -111,111 +119,90 @@
         }
 
         @keyframes pulseAura {
-            0% { transform: scale(0.95); opacity: 0.5; }
-            100% { transform: scale(1.05); opacity: 1; }
+            0% { transform: scale(0.95); opacity: 0.5; box-shadow: 0 0 10px #fff; }
+            100% { transform: scale(1.05); opacity: 1; box-shadow: 0 0 30px #fff; }
         }
 
+        @keyframes spinRing { to { transform: rotate(360deg); } }
+
         .glint-text {
-            font-size: 48px;
+            font-size: 52px;
             font-weight: 800;
             letter-spacing: 5px;
             color: #fff;
             text-shadow: 0 0 20px rgba(255,255,255,0.6);
+            margin-bottom: 5px;
         }
 
         .bio {
-            font-size: 14px; color: #888;
-            margin-bottom: 30px; letter-spacing: 5px; text-transform: uppercase;
+            font-size: 16px; color: #bbb;
+            margin-bottom: 30px; letter-spacing: 3px;
         }
 
-        /* --- New Link Cards (Cyber Design) --- */
-        .links { 
-            display: flex; 
-            flex-direction: column; 
-            gap: 15px; 
-            width: 100%; 
-        }
+        /* --- New Link Cards Style (เปลี่ยนแค่ตรงนี้ให้เท่ขึ้น) --- */
+        .links { display: flex; flex-direction: column; gap: 15px; width: 85%; }
 
         .link-card {
-            position: relative;
-            background: rgba(255, 255, 255, 0.03);
-            padding: 18px;
-            text-decoration: none;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 16px;
+            border-radius: 0px; /* เป็นเหลี่ยมคมๆ จะเท่กว่า */
+            text-decoration: none; 
             color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            gap: 15px; 
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            backdrop-filter: blur(5px);
             overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            backdrop-filter: blur(15px);
-            clip-path: polygon(0% 0%, 95% 0%, 100% 25%, 100% 100%, 5% 100%, 0% 75%);
         }
 
-        /* เส้นไฟวิ่งข้างใต้ */
-        .link-card::after {
+        /* เอฟเฟกต์แสงวิ่งตอนเมาส์วาง */
+        .link-card::before {
             content: '';
             position: absolute;
-            bottom: 0; left: -100%;
-            width: 100%; height: 2px;
-            background: linear-gradient(90deg, transparent, #fff, transparent);
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
             transition: 0.5s;
         }
 
         .link-card:hover {
             background: rgba(255, 255, 255, 0.1);
-            transform: translateX(8px) skewX(-2deg);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            box-shadow: -10px 0 20px rgba(255,255,255,0.1);
+            border-color: #fff;
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
         }
 
-        .link-card:hover::after {
+        .link-card:hover::before {
             left: 100%;
         }
 
-        .link-content {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            font-weight: 500;
-            letter-spacing: 2px;
-        }
-
-        .link-content i {
+        .link-card i {
             font-size: 20px;
             transition: 0.3s;
         }
 
-        .link-card:hover .link-content i {
+        .link-card:hover i {
             transform: scale(1.2);
-            filter: drop-shadow(0 0 8px #fff);
+            filter: drop-shadow(0 0 5px #fff);
         }
 
-        .link-card .arrow {
-            opacity: 0.3;
-            font-size: 12px;
-            transition: 0.3s;
-        }
+        /* --- End Link Cards Style --- */
 
-        .link-card:hover .arrow {
-            opacity: 1;
-            transform: translateX(5px);
-        }
-
-        /* --- Other Elements --- */
         #overlay {
             position: fixed; inset: 0; background: #000; z-index: 9999;
             display: flex; align-items: center; justify-content: center; color: #fff;
-            letter-spacing: 10px; font-weight: 300;
         }
-
+        
         #player-ui {
             position: fixed; bottom: 20px; right: 20px; z-index: 101;
-            display: none; background: rgba(0,0,0,0.8); padding: 12px; 
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 4px;
+            display: none; background: rgba(0,0,0,0.7); padding: 10px; border-radius: 20px;
         }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
     </style>
 </head>
 <body>
@@ -223,7 +210,7 @@
     <div id="sword-cursor">🗡️</div>
 
     <div id="overlay" onclick="startExperience()">
-        <p>INITIALIZING...</p>
+        <p>[ CLICK TO START ]</p>
     </div>
 
     <video id="bg-video" loop playsinline muted>
@@ -232,7 +219,7 @@
 
     <audio id="myAudio" loop><source src="11er.mp3" type="audio/mpeg"></audio>
 
-    <div id="player-ui">
+    <div class="audio-player" id="player-ui">
         <i class="fas fa-volume-up"></i>
         <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.5" style="accent-color: #fff; width: 60px;">
     </div>
@@ -240,35 +227,22 @@
     <div class="content-wrapper" id="main-content">
         <div class="profile-box">
             <div class="aura"></div>
+            <div class="spinning-ring"></div>
             <img src="FB_IMG_1699721840964.jpg" alt="Profile" class="profile-img">
         </div>
 
         <h1 class="glint-text">DEEBOOK</h1>
-        <p class="bio">Web Developer & Gamer</p>
+        <p class="bio">อ่านทำไม</p>
 
         <div class="links">
             <a href="https://www.facebook.com/share/1Ayx2zDfHo/" target="_blank" class="link-card">
-                <div class="link-content">
-                    <i class="fab fa-facebook-f"></i>
-                    <span>FACEBOOK</span>
-                </div>
-                <i class="fas fa-chevron-right arrow"></i>
+                <i class="fab fa-facebook-f"></i> FACEBOOK
             </a>
-
             <div onclick="copyDiscord('563742272462651410')" class="link-card" style="cursor: pointer;">
-                <div class="link-content">
-                    <i class="fab fa-discord"></i>
-                    <span>DISCORD</span>
-                </div>
-                <i class="fas fa-chevron-right arrow"></i>
+                <i class="fab fa-discord"></i> DISCORD
             </div>
-
             <a href="https://steamcommunity.com/profiles/76561199128294970/" target="_blank" class="link-card">
-                <div class="link-content">
-                    <i class="fab fa-steam"></i>
-                    <span>STEAM</span>
-                </div>
-                <i class="fas fa-chevron-right arrow"></i>
+                <i class="fab fa-steam"></i> STEAM
             </a>
         </div>
     </div>
@@ -297,11 +271,11 @@
             trail.className = 'trail';
             trail.style.left = x + 'px';
             trail.style.top = y + 'px';
-            trail.style.width = '25px';
+            trail.style.width = '20px';
             document.body.appendChild(trail);
             
             const anim = trail.animate([
-                { opacity: 1, transform: 'scaleY(1.5)' },
+                { opacity: 1, transform: 'scaleY(1)' },
                 { opacity: 0, transform: 'scaleY(0)' }
             ], { duration: 400 });
             
@@ -326,13 +300,7 @@
 
         function copyDiscord(id) {
             navigator.clipboard.writeText(id);
-            // เปลี่ยน alert เป็นเอฟเฟกต์เท่ๆ แทนถ้าต้องการ
-            const btn = event.currentTarget;
-            const originalText = btn.querySelector('span').innerText;
-            btn.querySelector('span').innerText = "COPIED!";
-            setTimeout(() => {
-                btn.querySelector('span').innerText = originalText;
-            }, 2000);
+            alert("คัดลอก Discord ID แล้ว!");
         }
 
         document.getElementById("volume-slider").addEventListener("input", (e) => {
