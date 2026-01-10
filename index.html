@@ -24,156 +24,130 @@
             overflow: hidden;
         }
 
+        /* --- Background Video --- */
+        #bg-video {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover; z-index: -1; opacity: 0.5;
+            pointer-events: none;
+        }
+
         /* --- Scanlines --- */
         body::before {
             content: " ";
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%);
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%);
             background-size: 100% 4px;
             z-index: 100;
             pointer-events: none;
         }
 
-        /* --- New Sword Cursor (Rotation Enabled) --- */
+        /* --- Instant Sword Cursor --- */
         #sword-container {
             position: fixed;
             left: 0; top: 0;
             pointer-events: none;
             z-index: 10000;
-            will-change: transform;
-            transition: transform 0.1s ease-out;
+            transform: translate(-20%, -80%); /* จัดตำแหน่งให้ปลายดาบอยู่ตรงเมาส์ */
         }
 
         #sword-icon {
-            font-size: 45px;
+            font-size: 50px;
             display: inline-block;
-            filter: drop-shadow(0 0 15px rgba(255,255,255,0.8));
-            transform: translate(-20%, -80%) rotate(-15deg);
-            transition: transform 0.2s;
+            filter: drop-shadow(0 0 15px #fff);
+            transition: transform 0.1s;
         }
 
-        /* เอฟเฟกต์หมุนตอนคลิก */
         .spin-slash {
-            animation: fastSpin 0.3s cubic-bezier(0.17, 0.89, 0.32, 1.28) forwards;
+            animation: fastSpin 0.3s ease-out forwards;
         }
 
         @keyframes fastSpin {
-            0% { transform: translate(-20%, -80%) rotate(-15deg) scale(1); }
-            50% { transform: translate(-20%, -80%) rotate(180deg) scale(1.5); filter: brightness(2); }
-            100% { transform: translate(-20%, -80%) rotate(345deg) scale(1); }
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.3); filter: brightness(3) drop-shadow(0 0 30px #fff); }
+            100% { transform: rotate(360deg) scale(1); }
         }
 
-        /* หางดาบแบบสะเก็ดไฟ (Particles) */
-        .slash-particle {
+        /* หางดาบแบบเส้นสายฟ้า */
+        .slash-line {
             position: fixed;
-            width: 4px;
-            height: 4px;
+            height: 2px;
             background: #fff;
-            border-radius: 50%;
             pointer-events: none;
             z-index: 9999;
-            box-shadow: 0 0 10px #fff;
+            box-shadow: 0 0 8px #fff;
+            transform-origin: left center;
         }
 
         /* --- Profile UI --- */
-        #bg-video {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            object-fit: cover; z-index: -1; opacity: 0.4;
-        }
-
         .content-wrapper {
             display: none;
             flex-direction: column;
             align-items: center;
             z-index: 10;
-            width: 100%;
-            max-width: 450px;
-            animation: fadeIn 1s ease-out;
+            animation: fadeIn 0.8s ease-out;
         }
 
         .profile-box {
             position: relative;
             width: 160px; height: 160px;
             margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         .aura {
-            position: absolute;
-            width: 100%; height: 100%;
-            border-radius: 50%;
-            border: 2px solid #fff;
-            box-shadow: 0 0 20px #fff, inset 0 0 20px #fff;
-            animation: pulseAura 2s infinite alternate;
-        }
-
-        .spinning-ring {
-            position: absolute;
-            width: 115%; height: 115%;
-            border-radius: 50%;
-            border: 1px dashed rgba(255,255,255,0.5);
-            animation: spinRing 10s linear infinite;
+            position: absolute; width: 100%; height: 100%;
+            border-radius: 50%; border: 2px solid #fff;
+            box-shadow: 0 0 20px #fff; animation: pulse 1.5s infinite alternate;
         }
 
         .profile-img {
+            position: absolute; top: 10px; left: 10px;
             width: 140px; height: 140px;
-            border-radius: 50%;
-            object-fit: cover;
-            z-index: 5;
-            border: 4px solid #000;
+            border-radius: 50%; object-fit: cover; border: 3px solid #000;
         }
 
-        @keyframes pulseAura {
-            0% { transform: scale(0.95); opacity: 0.5; }
-            100% { transform: scale(1.05); opacity: 1; }
-        }
-
-        @keyframes spinRing { to { transform: rotate(360deg); } }
+        @keyframes pulse { from { opacity: 0.4; transform: scale(0.95); } to { opacity: 1; transform: scale(1.05); } }
 
         .glint-text {
-            font-size: 52px; font-weight: 800; letter-spacing: 5px; color: #fff;
-            text-shadow: 0 0 20px rgba(255,255,255,0.6); margin-bottom: 5px;
+            font-size: 50px; font-weight: 800; letter-spacing: 5px;
+            text-shadow: 0 0 15px rgba(255,255,255,0.7);
         }
 
-        .bio { font-size: 16px; color: #bbb; margin-bottom: 30px; letter-spacing: 3px; }
+        .bio { font-size: 14px; color: #aaa; margin-bottom: 25px; letter-spacing: 2px; }
 
-        .links { display: flex; flex-direction: column; gap: 15px; width: 85%; }
-
-        .link-card {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 16px; border-radius: 0px; text-decoration: none; color: #fff;
-            border: 1px solid rgba(255, 255, 255, 0.2); position: relative;
-            display: flex; align-items: center; justify-content: center; gap: 15px;
-            transition: 0.3s ease; backdrop-filter: blur(5px); overflow: hidden;
+        /* --- New Social Icons (No Box) --- */
+        .social-icons {
+            display: flex;
+            gap: 30px;
+            margin-top: 10px;
         }
 
-        .link-card::before {
-            content: ''; position: absolute; top: 0; left: -100%;
-            width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: 0.5s;
+        .icon-link {
+            color: rgba(255,255,255,0.6);
+            font-size: 32px;
+            text-decoration: none;
+            transition: all 0.3s;
+            position: relative;
         }
 
-        .link-card:hover {
-            background: rgba(255, 255, 255, 0.1); border-color: #fff;
-            transform: scale(1.02); box-shadow: 0 0 20px rgba(255,255,255,0.2);
+        .icon-link:hover {
+            color: #fff;
+            transform: translateY(-5px);
+            filter: drop-shadow(0 0 15px #fff);
         }
 
-        .link-card:hover::before { left: 100%; }
-
+        /* --- System UI --- */
         #overlay {
             position: fixed; inset: 0; background: #000; z-index: 9999;
-            display: flex; align-items: center; justify-content: center; color: #fff;
-        }
-        
-        #player-ui {
-            position: fixed; bottom: 20px; right: 20px; z-index: 101;
-            display: none; background: rgba(0,0,0,0.7); padding: 10px; border-radius: 20px;
+            display: flex; align-items: center; justify-content: center;
         }
 
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        #player-ui {
+            position: fixed; bottom: 20px; right: 20px; z-index: 101;
+            display: none; background: rgba(0,0,0,0.6); padding: 10px; border-radius: 20px;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -200,22 +174,21 @@
     <div class="content-wrapper" id="main-content">
         <div class="profile-box">
             <div class="aura"></div>
-            <div class="spinning-ring"></div>
             <img src="FB_IMG_1699721840964.jpg" alt="Profile" class="profile-img">
         </div>
 
         <h1 class="glint-text">DEEBOOK</h1>
         <p class="bio">อ่านทำไม</p>
 
-        <div class="links">
-            <a href="https://www.facebook.com/share/1Ayx2zDfHo/" target="_blank" class="link-card">
-                <i class="fab fa-facebook-f"></i> FACEBOOK
+        <div class="social-icons">
+            <a href="https://www.facebook.com/share/1Ayx2zDfHo/" target="_blank" class="icon-link">
+                <i class="fab fa-facebook-f"></i>
             </a>
-            <div onclick="copyDiscord('563742272462651410')" class="link-card" style="cursor: pointer;">
-                <i class="fab fa-discord"></i> DISCORD
+            <div onclick="copyDiscord('563742272462651410')" class="icon-link" style="cursor: pointer;">
+                <i class="fab fa-discord"></i>
             </div>
-            <a href="https://steamcommunity.com/profiles/76561199128294970/" target="_blank" class="link-card">
-                <i class="fab fa-steam"></i> STEAM
+            <a href="https://steamcommunity.com/profiles/76561199128294970/" target="_blank" class="icon-link">
+                <i class="fab fa-steam"></i>
             </a>
         </div>
     </div>
@@ -223,67 +196,52 @@
     <script>
         const container = document.getElementById('sword-container');
         const sword = document.getElementById('sword-icon');
-        let mouseX = 0, mouseY = 0;
-        let swordX = 0, swordY = 0;
-        let prevX = 0;
+        let lastX = 0, lastY = 0;
 
+        // ติดมือทันที ไม่รอ Animation Frame สำหรับตำแหน่ง
         document.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
+            container.style.left = e.clientX + 'px';
+            container.style.top = e.clientY + 'px';
 
-            // เอียงดาบตามทิศทางขยับเมาส์
-            let diffX = e.clientX - prevX;
-            let tilt = diffX * 2; // ยิ่งลากเร็วยิ่งเอียง
-            if(tilt > 45) tilt = 45;
-            if(tilt < -45) tilt = -45;
-            
-            sword.style.transform = `translate(-20%, -80%) rotate(${tilt - 15}deg)`;
-            prevX = e.clientX;
-
-            createSpark(e.clientX, e.clientY);
+            // สร้างหางดาบ
+            createSlash(e.clientX, e.clientY, lastX, lastY);
+            lastX = e.clientX;
+            lastY = e.clientY;
         });
 
-        function animate() {
-            swordX += (mouseX - swordX) * 0.15;
-            swordY += (mouseY - swordY) * 0.15;
-            container.style.transform = `translate(${swordX}px, ${swordY}px)`;
-            requestAnimationFrame(animate);
-        }
-        animate();
+        function createSlash(x1, y1, x2, y2) {
+            const dist = Math.hypot(x1 - x2, y1 - y2);
+            if (dist < 10) return; // ไม่สร้างถ้าเมาส์ขยับน้อยเกินไป
 
-        // ระบบหางดาบแบบ Particle
-        function createSpark(x, y) {
-            const p = document.createElement('div');
-            p.className = 'slash-particle';
-            p.style.left = x + 'px';
-            p.style.top = y + 'px';
-            document.body.appendChild(p);
+            const line = document.createElement('div');
+            line.className = 'slash-line';
+            line.style.width = dist + 'px';
+            line.style.left = x2 + 'px';
+            line.style.top = y2 + 'px';
+            
+            const angle = Math.atan2(y1 - y2, x1 - x2);
+            line.style.transform = `rotate(${angle}rad)`;
 
-            const destinationX = x + (Math.random() - 0.5) * 50;
-            const destinationY = y + (Math.random() - 0.5) * 50;
-
-            const anim = p.animate([
-                { transform: 'translate(0, 0) scale(1)', opacity: 1 },
-                { transform: `translate(${destinationX - x}px, ${destinationY - y}px) scale(0)`, opacity: 0 }
-            ], { duration: 500, easing: 'ease-out' });
-
-            anim.onfinish = () => p.remove();
+            document.body.appendChild(line);
+            
+            setTimeout(() => {
+                line.style.opacity = '0';
+                line.style.transition = '0.2s';
+                setTimeout(() => line.remove(), 200);
+            }, 50);
         }
 
-        // คลิกแล้วหมุนฟัน 360 องศา
         document.addEventListener('mousedown', () => {
             sword.classList.add('spin-slash');
-            setTimeout(() => {
-                sword.classList.remove('spin-slash');
-            }, 300);
+            setTimeout(() => sword.classList.remove('spin-slash'), 300);
         });
 
         function startExperience() {
             document.getElementById("overlay").style.display = "none";
             document.getElementById("main-content").style.display = "flex";
             document.getElementById("player-ui").style.display = "block";
-            const audio = document.getElementById("myAudio");
             const video = document.getElementById("bg-video");
+            const audio = document.getElementById("myAudio");
             video.muted = false;
             video.play();
             audio.play();
