@@ -2,14 +2,13 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <title>DEEBOOK | Ultra Edition</title>
+    <title>DEEBOOK | Ultra Sound Edition</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@700&display=swap" rel="stylesheet">
     <style>
         body { margin: 0; overflow: hidden; background: #000; cursor: none; font-family: 'Kanit', sans-serif; }
         canvas { display: block; position: fixed; top: 0; left: 0; z-index: 1; pointer-events: none; }
         
-        /* UI Content */
         #ui-layer {
             position: relative; z-index: 10; height: 100vh;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -24,12 +23,13 @@
         #overlay {
             position: fixed; inset: 0; background: #000; z-index: 100;
             display: flex; align-items: center; justify-content: center; color: white;
+            font-size: 1.5rem; letter-spacing: 2px; cursor: pointer;
         }
     </style>
 </head>
 <body>
 
-    <div id="overlay" onclick="start()">[ CLICK TO ACTIVATE SWORD ]</div>
+    <div id="overlay" onclick="start()">[ CLICK TO ACTIVATE SWORD & AUDIO ]</div>
 
     <div id="ui-layer">
         <img src="FB_IMG_1699721840964.jpg" class="profile-img" alt="Profile">
@@ -41,11 +41,25 @@
         let slashes = [];
         let particles = [];
         let canDraw = false;
+        
+        // --- ส่วนของระบบเสียง ---
+        let swingSound;
+        
+        function preload() {
+            // โหลดไฟล์เสียงเตรียมไว้ (ตรวจสอบชื่อไฟล์ให้ตรงกันนะ!)
+            swingSound = new Audio('swing.mp3'); 
+        }
 
         function start() {
             document.getElementById('overlay').style.display = 'none';
             canDraw = true;
-            // สั่งเล่นเพลง/วิดีโอตรงนี้ได้เลย
+            
+            // ปลดล็อค Audio Context (เบราว์เซอร์บังคับให้ต้องคลิกก่อนถึงจะเล่นเสียงได้)
+            if (swingSound) {
+                swingSound.play().then(() => {
+                    swingSound.pause(); // เล่นแล้วหยุดทันทีเพื่อให้พร้อมใช้งาน
+                }).catch(e => console.log("Audio load error:", e));
+            }
         }
 
         function setup() {
@@ -60,18 +74,18 @@
             if (!canDraw) return;
             clear();
 
-            // 1. วาดรอยฟัน (Slashes)
+            // วาดรอยฟัน
             for (let i = slashes.length - 1; i >= 0; i--) {
                 let s = slashes[i];
                 stroke(255, s.alpha);
                 strokeWeight(s.weight);
                 line(s.x1, s.y1, s.x2, s.y2);
-                s.alpha -= 10; // ค่อยๆ จางหาย
+                s.alpha -= 10;
                 s.weight *= 0.9;
                 if (s.alpha <= 0) slashes.splice(i, 1);
             }
 
-            // 2. วาดเอฟเฟกต์ไฟ (Particles)
+            // วาดสะเก็ดไฟ
             for (let i = particles.length - 1; i >= 0; i--) {
                 let p = particles[i];
                 noStroke();
@@ -83,23 +97,18 @@
                 if (p.alpha <= 0) particles.splice(i, 1);
             }
 
-            // 3. วาดตัวดาบ (Sword Follower)
             drawSword(mouseX, mouseY);
         }
 
         function drawSword(x, y) {
             push();
             translate(x, y);
-            rotate(radians(-5)); // องศาที่คุณตั้งไว้
-            
-            // แสง Aura รอบดาบ
+            rotate(radians(-5));
             noStroke();
             for(let i=10; i>0; i--) {
                 fill(255, 255, 255, 10 - i);
                 ellipse(0, 0, i * 10, i * 2);
             }
-
-            // ตัวดาบ (สมมติว่าเป็นดาบเลเซอร์)
             stroke(255);
             strokeWeight(4);
             line(0, 0, -50, 50); 
@@ -108,26 +117,36 @@
 
         function mouseMoved() {
             if (!canDraw) return;
-            // สร้างรอยฟันเวลาเลื่อนเม้าส์เร็วๆ
-            if (dist(mouseX, mouseY, pmouseX, pmouseY) > 10) {
+            
+            let speed = dist(mouseX, mouseY, pmouseX, pmouseY);
+            
+            if (speed > 15) {
+                // เพิ่มรอยฟัน
                 slashes.push({
                     x1: mouseX, y1: mouseY,
                     x2: pmouseX, y2: pmouseY,
                     alpha: 255,
-                    weight: 5
+                    weight: map(speed, 0, 100, 2, 12)
                 });
+
+                // --- เล่นเสียงตามความเร็ว ---
+                if (swingSound) {
+                    let soundClone = swingSound.cloneNode(); 
+                    // ยิ่งเลื่อนเมาส์เร็ว (speed มาก) เสียงยิ่งแหลม (playbackRate สูง)
+                    let pitch = map(speed, 15, 100, 0.7, 2.2); 
+                    soundClone.playbackRate = constrain(pitch, 0.7, 2.2);
+                    soundClone.volume = 0.2; // ความดัง 20%
+                    soundClone.play();
+                }
             }
         }
 
         function mousePressed() {
             if (!canDraw) return;
-            // เอฟเฟกต์ระเบิดไฟเวลาคลิก
             for (let i = 0; i < 20; i++) {
                 particles.push({
-                    x: mouseX,
-                    y: mouseY,
-                    vx: random(-5, 5),
-                    vy: random(-5, 5),
+                    x: mouseX, y: mouseY,
+                    vx: random(-5, 5), vy: random(-5, 5),
                     size: random(5, 15),
                     color: color(255, random(100, 200), 0),
                     alpha: 255
