@@ -31,16 +31,17 @@
             pointer-events: none;
             z-index: 10000;
             will-change: left, top;
-            /* ปรับตำแหน่ง Offset เล็กน้อยให้ปลายดาบตรงกับจุด Click */
-            transform: translate(-2px, -2px); 
+            transform: translate(-5px, -5px); 
         }
 
         #sword-img {
-            width: 40px; /* ปรับขนาดให้ใหญ่ขึ้นจากเดิม (40px) ตามที่ต้องการ */
+            width: 45px; 
             height: auto;
-            transform: rotate(-135deg); /* คืนค่าองศาเดิมที่คุณว่าถูกแล้ว */
+            /* ปรับทิศทางใหม่: ลองใช้ 45deg และกลับด้านรูป */
+            transform: rotate(45deg) scaleX(-1); 
             filter: drop-shadow(0 0 8px rgba(255,255,255,0.8));
             display: block;
+            transition: transform 0.05s;
         }
 
         .click-anim {
@@ -48,9 +49,21 @@
         }
 
         @keyframes poke {
-            0% { transform: rotate(-135deg) scale(1); }
-            50% { transform: rotate(-135deg) scale(1.2); }
-            100% { transform: rotate(-135deg) scale(1); }
+            0% { transform: rotate(45deg) scaleX(-1) scale(1); }
+            50% { transform: rotate(45deg) scaleX(-1) scale(1.4) translate(-5px, 5px); }
+            100% { transform: rotate(45deg) scaleX(-1) scale(1); }
+        }
+
+        /* --- Fire Effect --- */
+        .fire-particle {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            background: orange;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            box-shadow: 0 0 10px red, 0 0 20px yellow;
         }
 
         .slash-line {
@@ -189,9 +202,33 @@
             setTimeout(() => line.remove(), 300);
         }
 
-        document.addEventListener('mousedown', () => {
+        // --- เพิ่มฟังก์ชันสร้างไฟ ---
+        function createFire(x, y) {
+            for (let i = 0; i < 8; i++) {
+                const p = document.createElement('div');
+                p.className = 'fire-particle';
+                p.style.left = x + 'px';
+                p.style.top = y + 'px';
+                document.body.appendChild(p);
+
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = Math.random() * 50 + 20;
+                const tx = Math.cos(angle) * velocity;
+                const ty = Math.sin(angle) * velocity;
+
+                p.animate([
+                    { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+                    { transform: `translate(${tx}px, ${ty}px) scale(0)`, opacity: 0 }
+                ], { duration: 500, easing: 'ease-out' });
+
+                setTimeout(() => p.remove(), 500);
+            }
+        }
+
+        document.addEventListener('mousedown', (e) => {
             if(swordImg) {
                 swordImg.classList.add('click-anim');
+                createFire(e.clientX, e.clientY); // เรียกใช้เอฟเฟกต์ไฟ
                 setTimeout(() => swordImg.classList.remove('click-anim'), 100);
             }
         });
